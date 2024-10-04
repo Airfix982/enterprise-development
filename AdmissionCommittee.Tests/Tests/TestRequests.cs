@@ -1,12 +1,12 @@
 using AdmissionCommittee.Tests.Fixtures;
 
-namespace AdmissionCommittee.Tests.Tests;
+namespace AdmissionCommittee.Tests.Tests;   
 
-/// <summary>
+/// <summary>  
 /// This class contains unit tests for testing various operations related to abiturients, applications, and specialities.
 /// </summary>
 /// <param name="fixture">Fixture to provide data for testing.</param>
-public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<AdmissionComitteeFixture>
+public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<AdmissionComitteeFixture> 
 {
     private AdmissionComitteeFixture _fixture = fixture;
 
@@ -202,5 +202,5 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
                      query.Select(q => q.Abiturient.Name).ToList());
 
         Assert.Equal([0, 4, 0, 1, 0, 4, 9, 9, 8], query.Select(q => q.SpecialityId).ToList());
-    }
+    } 
 }
