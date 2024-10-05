@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents an application submitted by an abiturient for a specific speciality.
 /// </summary>
-public class Application
+public class Application : IEntity
 {
     /// <summary>
     /// Unique identifier of the application.

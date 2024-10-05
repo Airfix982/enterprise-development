@@ -3,7 +3,7 @@
 /// <summary>
 /// Result of an exam
 /// </summary>
-public class ExamResult
+public class ExamResult : IEntity
 {
     /// <summary>
     /// Unique Id
