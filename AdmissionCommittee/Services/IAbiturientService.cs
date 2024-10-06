@@ -8,7 +8,10 @@ using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Services
 {
-    public interface IAbiturientService
+    /// <summary>
+    /// An interface for abiturient service
+    /// </summary>
+    public interface IAbiturientService : IBaseService<Abiturient, AbiturientDto>
     {
         /// <summary>
         /// Get all abiturients from the city

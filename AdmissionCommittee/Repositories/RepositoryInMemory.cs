@@ -22,39 +22,23 @@ namespace AdmissionCommittee.Domain.Repositories
         {
             _context = new();
         }
-        /// <summary>
-        /// Retrieves all entities from the in-memory context.
-        /// </summary>
-        /// <returns>An IEnumerable collection of all entities.</returns>
+        /// <inheritdoc />
         public IEnumerable<T> GetAll() => _context;
-        /// <summary>
-        /// Retrieves an entity by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the entity.</param>
-        /// <returns>The entity with the specified identifier, or null if not found.</returns>
+        /// <inheritdoc />
         public T? GetById(int id)
         {
             return _context.FirstOrDefault(entity => entity.Id == id);
         }
-        /// <summary>
-        /// Adds a new entity to the in-memory context.
-        /// </summary>
-        /// <param name="entity">The entity to add.</param>
+        /// <inheritdoc />
         public void Add(T entity)
         {
             _context.Add(entity);
         }
-        /// <summary>
-        /// Updates an existing entity in the in-memory context.
-        /// </summary>
-        /// <param name="entity">The entity with updated values.</param>
+        /// <inheritdoc />
         public void Update(T entity)
         {
         }
-        /// <summary>
-        /// Deletes an entity from the in-memory context by its unique identifier.
-        /// </summary>
-        /// <param name="id">The unique identifier of the entity to delete.</param>
+        /// <inheritdoc />
         public void Delete(int id)
         {
             var entity = GetById(id);

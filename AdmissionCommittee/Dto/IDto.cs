@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Dto
 {
-    public class AbiturientDto : IDto
+    public interface IDto
     {
     }
 }

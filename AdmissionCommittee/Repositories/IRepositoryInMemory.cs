@@ -14,10 +14,10 @@ namespace AdmissionCommittee.Domain.Repositories
     public interface IRepositoryInMemory<T> where T : class, IEntity
     {
         /// <summary>
-        /// Get object by Id
+        /// Retrieves an entity by its unique identifier.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns><typeparamref name="T"/></returns>
+        /// <param name="id">The unique identifier of the entity.</param>
+        /// <returns typeparamref name="T"/>The entity with the specified identifier, or null if not found.</returns>
         public T? GetById(int id);
         /// <summary>
         /// Get all objects
@@ -25,19 +25,19 @@ namespace AdmissionCommittee.Domain.Repositories
         /// <returns>IEnumerable<typeparamref name="T"/></returns>
         public IEnumerable<T> GetAll();
         /// <summary>
-        /// Update object
+        /// Updates an existing entity in the in-memory context.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">The entity with updated values.</param>
         public void Update(T entity);
         /// <summary>
-        /// Add an object
+        /// Adds a new entity to the in-memory context.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">The entity to add.</param>
         public void Add(T entity);
         /// <summary>
-        /// Delete an object
+        /// Deletes an entity from the in-memory context by its unique identifier.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="id">The unique identifier of the entity to delete.</param>
         public void Delete(int id);
     }
 }

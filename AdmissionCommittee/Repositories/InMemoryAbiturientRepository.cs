@@ -10,10 +10,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbiturientRepository
     {
-        /// <summary>
-        /// Updates an existing abiturient in the in-memory context.
-        /// </summary>
-        /// <param name="Abiturient">The abiturient with updated values.</param>
+        /// <inheritdoc />
         public new void Update(Abiturient abiturient)
         {
             var existingAbiturient = GetById(abiturient.Id);

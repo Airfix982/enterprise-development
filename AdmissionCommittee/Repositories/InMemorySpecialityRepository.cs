@@ -9,10 +9,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemorySpecialityRepository : RepositoryInMemory<Speciality>, ISpecialityRepository
     {
-        /// <summary>
-        /// Updates an existing speciality in the in-memory context.
-        /// </summary>
-        /// <param name="Speciality">The speciality with updated values.</param>
+        /// <inheritdoc />
         public new void Update(Speciality speciality)
         {
             var existingSpeciality = GetById(speciality.Id);

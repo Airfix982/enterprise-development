@@ -9,10 +9,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryApplicationRepository : RepositoryInMemory<Application>, IApplicationRepository
     {
-        /// <summary>
-        /// Updates an existing application in the in-memory context.
-        /// </summary>
-        /// <param name="Application">The application with updated values.</param>
+        /// <inheritdoc />
         public new void Update(Application application)
         {
             var existingApplication = GetById(application.Id);

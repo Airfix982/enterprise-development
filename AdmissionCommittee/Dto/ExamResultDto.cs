@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Dto
 {
-    internal class ExamResultDto
+    public class ExamResultDto : IDto
     {
     }
 }

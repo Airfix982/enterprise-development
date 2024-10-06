@@ -9,10 +9,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryExamResultRepository : RepositoryInMemory<ExamResult>, IExamResultRepository
     {
-        /// <summary>
-        /// Updates an existing exam result in the in-memory context.
-        /// </summary>
-        /// <param name="ExamResult">The exam result with updated values.</param>
+        /// <inheritdoc />
         public new void Update(ExamResult examResult)
         {
             var existingExamResult = GetById(examResult.Id);

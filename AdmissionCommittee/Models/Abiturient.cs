@@ -5,9 +5,9 @@
 public class Abiturient : IEntity
 {
     /// <summary>
-    /// Unique Id
+    /// Unique identifier of the abiturient.
     /// </summary>
-    /// <example>1</example>
+    /// <example>101</example>
     public required int Id { get; set; }
     /// <summary>
     /// Abiturient's name
