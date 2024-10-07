@@ -28,7 +28,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Add(AbiturientDto abiturientDto)
         {
-            Abiturient abiturient = new
+            Abiturient abiturient = new()
             {
                 Id = abiturientDto.Id,
                 Name = abiturientDto.Name,
@@ -42,7 +42,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(AbiturientDto abiturientDto)
         {
-            Abiturient abiturient = new
+            Abiturient abiturient = new()
             {
                 Id = abiturientDto.Id,
                 Name = abiturientDto.Name,

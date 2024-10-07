@@ -28,7 +28,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Add(SpecialityDto specialityDto)
         {
-            Speciality speciality = new Speciality
+            Speciality speciality = new()
             {
                 Id = specialityDto.Id,
                 Name = specialityDto.Name,
@@ -40,7 +40,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(SpecialityDto specialityDto)
         {
-            Speciality speciality = new Speciality
+            Speciality speciality = new()
             {
                 Id = specialityDto.Id,
                 Name = specialityDto.Name,

@@ -16,7 +16,7 @@ namespace AdmissionCommittee.Domain.Services
     /// exam result repository to perform CRUD operations and includes filtering methods based on
     /// abiturient and exam name.
     /// </summary>
-    internal class ExamResultService(
+    public class ExamResultService(
         IExamResultRepository examResultRepository) : IExamResultService
     {
         private readonly IExamResultRepository _examResultRepository = examResultRepository;
@@ -27,7 +27,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Add(ExamResultDto examResultDto)
         {
-            ExamResult examResult = new ExamResult
+            ExamResult examResult = new()
             {
                 Id = examResultDto.Id,
                 AbiturientId = examResultDto.AbiturientId,
@@ -39,7 +39,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(ExamResultDto examResultDto)
         {
-            ExamResult examResult = new ExamResult
+            ExamResult examResult = new()
             {
                 Id = examResultDto.Id,
                 AbiturientId = examResultDto.AbiturientId,

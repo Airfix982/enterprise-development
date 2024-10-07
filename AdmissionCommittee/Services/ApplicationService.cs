@@ -16,7 +16,7 @@ namespace AdmissionCommittee.Domain.Services
     /// application repository to perform CRUD operations and includes filtering methods based on
     /// speciality, priority, and abiturient.
     /// </summary>
-    internal class ApplicationService(
+    public class ApplicationService(
         IApplicationRepository applicationRepository) : IApplicationService
     {
         private readonly IApplicationRepository _applicationRepository = applicationRepository;
@@ -27,7 +27,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Add(ApplicationDto applicationDto)
         {
-            Application application = new
+            Application application = new()
             {
                 Id = applicationDto.Id,
                 SpecialityId = applicationDto.SpecialityId,
@@ -39,7 +39,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(ApplicationDto applicationDto)
         {
-            Application application = new
+            Application application = new()
             {
                 Id = applicationDto.Id,
                 SpecialityId = applicationDto.SpecialityId,
