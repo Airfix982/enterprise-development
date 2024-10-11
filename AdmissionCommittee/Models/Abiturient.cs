@@ -2,18 +2,23 @@
 /// <summary>
 /// Abiturient who sends documents to enter the university
 /// </summary>
-public class Abiturient
+public class Abiturient : IEntity
 {
     /// <summary>
-    /// Unique Id
+    /// Unique identifier of the abiturient.
     /// </summary>
-    /// <example>1</example>
+    /// <example>101</example>
     public required int Id { get; set; }
     /// <summary>
     /// Abiturient's name
     /// </summary>
     /// <example>Ivan</example>
     public required string Name { get; set; }
+    /// <summary>
+    /// Abiturient's name
+    /// </summary>
+    /// <example>Ivanov</example>
+    public required string LastName { get; set; }
     /// <summary>
     /// Birthday date of an abiturient
     /// </summary>

@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a speciality offered by a university.
 /// </summary>
-public class Speciality
+public class Speciality : IEntity
 {
     /// <summary>
     /// Unique identifier of the speciality.
