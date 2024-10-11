@@ -9,7 +9,6 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemorySpecialityRepository : RepositoryInMemory<Speciality>, ISpecialityRepository
     {
-        public InMemorySpecialityRepository() : base() { }
         public InMemorySpecialityRepository(List<Speciality> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(Speciality speciality)
