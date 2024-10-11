@@ -3,6 +3,13 @@ using AdmissionCommittee.Domain.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IncludeXmlComments(xmlPath);
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
