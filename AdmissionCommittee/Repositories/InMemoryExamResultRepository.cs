@@ -9,6 +9,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryExamResultRepository : RepositoryInMemory<ExamResult>, IExamResultRepository
     {
+        public InMemoryExamResultRepository() : base() { }
         public InMemoryExamResultRepository(List<ExamResult> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(ExamResult examResult)
