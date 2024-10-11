@@ -10,6 +10,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbiturientRepository
     {
+        public InMemoryAbiturientRepository(List<Abiturient> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(Abiturient abiturient)
         {

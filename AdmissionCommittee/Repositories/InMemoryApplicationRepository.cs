@@ -9,6 +9,7 @@ namespace AdmissionCommittee.Domain.Repositories
 {
     public class InMemoryApplicationRepository : RepositoryInMemory<Application>, IApplicationRepository
     {
+        public InMemoryApplicationRepository(List<Application> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(Application application)
         {

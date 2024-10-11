@@ -22,6 +22,13 @@ namespace AdmissionCommittee.Domain.Repositories
         {
             _context = new();
         }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Repository{T}"/> class.
+        /// </summary>
+        public RepositoryInMemory(List<T> initData)
+        {
+            _context = initData;
+        }
         /// <inheritdoc />
         public IEnumerable<T> GetAll() => _context;
         /// <inheritdoc />

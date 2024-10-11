@@ -16,11 +16,13 @@ namespace AdmissionCommittee.Domain.Services
     public class AbiturientService(
          IAbiturientRepository abiturientRepository,
          IApplicationService applicationService,
-         IExamResultService examResultService) : IAbiturientService
+         IExamResultService examResultService,
+         ISpecialityService specialityService) : IAbiturientService
     {
         private readonly IAbiturientRepository _abiturientRepository = abiturientRepository;
         private readonly IApplicationService _applicationService = applicationService;
         private readonly IExamResultService _examResultService = examResultService;
+        private readonly ISpecialityService _specialityService = specialityService;
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetAll() => _abiturientRepository.GetAll();
         /// <inheritdoc />
@@ -78,14 +80,25 @@ namespace AdmissionCommittee.Domain.Services
         public IEnumerable<SpecialitiesCountAsFavoriteDto> GetAbiturientsCountByFirstPrioritySpecialities()
         {
             int firstPriority = 1;
+
+            var allSpecialities = _specialityService.GetAll();
+
             var applicationsWithFirstPriority = _applicationService.GetApplicationsByPriority(firstPriority);
-            return applicationsWithFirstPriority
-                   .GroupBy(a => a.SpecialityId)
-                   .Select(group => new SpecialitiesCountAsFavoriteDto
-                   {
-                       SpecialityId = group.Key,
-                       AbiturientsCount = group.Count()
-                   });
+
+            var groupedApplications = applicationsWithFirstPriority
+                                        .GroupBy(a => a.SpecialityId)
+                                        .Select(group => new
+                                        {
+                                            SpecialityId = group.Key,
+                                            AbiturientsCount = group.Count()
+                                        })
+                                        .ToDictionary(g => g.SpecialityId, g => g.AbiturientsCount);
+
+            return allSpecialities.Select(speciality => new SpecialitiesCountAsFavoriteDto
+            {
+                SpecialityId = speciality.Id,
+                AbiturientsCount = groupedApplications.ContainsKey(speciality.Id) ? groupedApplications[speciality.Id] : 0
+            });
         }
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetTopRatedAbiturients(int maxCount)
