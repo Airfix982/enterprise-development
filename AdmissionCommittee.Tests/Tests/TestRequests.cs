@@ -1,13 +1,12 @@
-using AdmissionCommittee.Domain.Services;
 using AdmissionCommittee.Tests.Fixtures;
 
-namespace AdmissionCommittee.Tests.Tests;   
+namespace AdmissionCommittee.Tests.Tests;
 
 /// <summary>  
 /// This class contains unit tests for testing various operations related to abiturients, applications, and specialities.
 /// </summary>
 /// <param name="fixture">Fixture to provide data for testing.</param>
-public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<AdmissionComitteeFixture> 
+public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<AdmissionComitteeFixture>
 {
     private AdmissionComitteeFixture _fixture = fixture;
 
@@ -32,7 +31,7 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
         var query = _fixture.AbiturientService.GetAbiturientsOlderThan(20).Select(a => a.Id).ToList();
 
         Assert.Equivalent(4, query.Count);
-        Assert.Equal( [1, 3, 5, 8], query);
+        Assert.Equal([1, 3, 5, 8], query);
     }
 
     /// <summary>
@@ -57,44 +56,54 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
         var query = _fixture.AbiturientService.GetAbiturientsCountByFirstPrioritySpecialities().ToList();
 
         Assert.Collection(query,
-            item => { 
-                Assert.Equal(0, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(0, item.SpecialityId);
                 Assert.Equal(2, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(1, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(1, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(2, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(2, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(3, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(3, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(4, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(4, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(5, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(5, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(6, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(6, item.SpecialityId);
                 Assert.Equal(0, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(7, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(7, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(8, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(8, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             },
-            item => { 
-                Assert.Equal(9, item.SpecialityId); 
+            item =>
+            {
+                Assert.Equal(9, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
             }
             );
@@ -106,7 +115,7 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     [Fact]
     public void TestTopRatedAbiturients()
     {
-        var query = _fixture.AbiturientService.GetTopRatedAbiturients(5).Select(a => a.Id).ToList();
+        var query = _fixture.AbiturientService.GetTopRatedAbiturients(5).Select(a => a.abiturient.Id).ToList();
 
         Assert.Equivalent(5, query.Count);
         Assert.Equal([3, 9, 7, 5, 1], query);
@@ -126,5 +135,5 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
 
         Assert.Equal([0, 8, 1, 4, 9], query
             .Select(q => q.FavoriteSpecialityId).ToList());
-    } 
+    }
 }

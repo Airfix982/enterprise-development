@@ -1,11 +1,6 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Services
 {
@@ -30,19 +25,19 @@ namespace AdmissionCommittee.Domain.Services
         public Application GetById(int id)
         {
             var application = _applicationRepository.GetById(id);
-            if(application  == null)
+            if (application == null)
                 throw new KeyNotFoundException("Application not found");
             return application;
         }
         /// <inheritdoc />
         public void Add(ApplicationDto applicationDto)
         {
-            if(_abiturientRepository.GetById(applicationDto.AbiturientId) == null)
+            if (_abiturientRepository.GetById(applicationDto.AbiturientId) == null)
                 throw new InvalidOperationException("Application to not existing abiturient");
             int abiturientApplicationsCount = GetApplicationsByAbiturientId(applicationDto.AbiturientId).Count();
             if (abiturientApplicationsCount > 3)
                 throw new InvalidOperationException("Abiturient cannot have more than 3 applications");
-            if(!_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Any())
+            if (!_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Any())
                 throw new InvalidOperationException("Application to not existing speciality");
             if (GetApplicationsByAbiturientId(applicationDto.AbiturientId).Select(ap => ap.SpecialityId)
                                                                           .Contains(applicationDto.SpecialityId))

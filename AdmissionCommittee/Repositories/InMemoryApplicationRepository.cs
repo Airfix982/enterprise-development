@@ -1,9 +1,4 @@
 ﻿using AdmissionCommittee.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Repositories
 {
@@ -22,12 +17,6 @@ namespace AdmissionCommittee.Domain.Repositories
         /// </summary>
         /// <param name="applicationList">List of applications to initialize the repository with.</param>
         public InMemoryApplicationRepository(List<Application> applicationList) : base(applicationList) { }
-
-        /// <summary>
-        /// Updates an existing application with new data.
-        /// </summary>
-        /// <param name="application">The updated application data.</param>
-        public InMemoryApplicationRepository(List<Application> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(Application application)
         {

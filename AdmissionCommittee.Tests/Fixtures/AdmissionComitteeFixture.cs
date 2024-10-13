@@ -1,5 +1,4 @@
-﻿using AdmissionCommittee.Domain.Models;
-using AdmissionCommittee.Domain.Repositories;
+﻿using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
 
 namespace AdmissionCommittee.Tests.Fixtures;
@@ -105,8 +104,8 @@ public class AdmissionComitteeFixture
             new() { Id = 9, Number = "1005012I", Name = "Philosophy", Facility = "Humanities" }
         ]
         );
-        ApplicationService = new ApplicationService(ApplicationRepository);
-        ExamResultService = new ExamResultService(ExamResultRepository);
+        ApplicationService = new ApplicationService(AbiturientRepository, SpecialityRepository, ApplicationRepository);
+        ExamResultService = new ExamResultService(ExamResultRepository, AbiturientRepository);
         SpecialityService = new SpecialityService(SpecialityRepository);
         AbiturientService = new AbiturientService(AbiturientRepository, ApplicationService, ExamResultService, SpecialityService);
     }
