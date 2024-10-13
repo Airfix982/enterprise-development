@@ -22,6 +22,7 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Constructor that initializes the repository with a predefined list of abiturients.
         /// </summary>
         /// <param name="initData">Initial list of abiturients.</param>
+
         public InMemoryAbiturientRepository(List<Abiturient> initData) : base(initData) { }
 
         /// <summary>

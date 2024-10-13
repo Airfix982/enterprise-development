@@ -27,6 +27,8 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Updates an existing application with new data.
         /// </summary>
         /// <param name="application">The updated application data.</param>
+        public InMemoryApplicationRepository(List<Application> initData) : base(initData) { }
+        /// <inheritdoc />
         public new void Update(Application application)
         {
             var existingApplication = GetById(application.Id);
