@@ -33,7 +33,7 @@ namespace AdmissionCommittee.Api.Controllers
         /// </summary>
         /// <param name="id">The ID of the abiturient.</param>
         /// <returns>The requested abiturient.</returns>
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<AbiturientDto> GetById(int id)
         {
@@ -41,8 +41,6 @@ namespace AdmissionCommittee.Api.Controllers
             var abiturient = _abiturientService.GetById(id);
             return Ok(abiturient);
         }
-
-
         /// <summary>
         /// Adds a new abiturient.
         /// </summary>
