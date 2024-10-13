@@ -1,3 +1,5 @@
+using AdmissionCommittee.Api.Middleware;
+using AdmissionCommittee.Domain.Attributes;
 using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
 
@@ -9,6 +11,10 @@ var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
 builder.Services.AddSwaggerGen(c =>
 {
     c.IncludeXmlComments(xmlPath);
+});
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new ValidateModelAttribute());
 });
 // Add services to the container.
 
@@ -32,6 +38,8 @@ builder.Logging.AddDebug();
 
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

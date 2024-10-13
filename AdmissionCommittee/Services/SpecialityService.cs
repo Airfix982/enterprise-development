@@ -21,13 +21,20 @@ namespace AdmissionCommittee.Domain.Services
             return _specialityRepository.GetAll();
         }
         /// <inheritdoc />
-        public Speciality? GetById(int id)
+        public Speciality GetById(int id)
         {
-            return _specialityRepository.GetById(id);
+            var speciality = _specialityRepository.GetById(id);
+            if(speciality == null)
+                throw new KeyNotFoundException("Speciality result not found");
+            return speciality;
         }
         /// <inheritdoc />
         public void Add(SpecialityDto specialityDto)
         {
+            if (_specialityRepository.GetAll().Any(s => s.Number == specialityDto.Number))
+            {
+                throw new InvalidOperationException("Speciality with this number already exists");
+            }
             Speciality speciality = new()
             {
                 Id = specialityDto.Id,
@@ -40,6 +47,10 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(SpecialityDto specialityDto)
         {
+            if (_specialityRepository.GetById(specialityDto.Id) == null)
+            {
+                throw new KeyNotFoundException("Cannot update a non-existing speciality");
+            }
             Speciality speciality = new()
             {
                 Id = specialityDto.Id,
@@ -52,6 +63,10 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Delete(int id)
         {
+            if (_specialityRepository.GetById(id) == null)
+            {
+                throw new KeyNotFoundException("Cannot delete a non-existing speciality");
+            }
             _specialityRepository.Delete(id);
         }
     }

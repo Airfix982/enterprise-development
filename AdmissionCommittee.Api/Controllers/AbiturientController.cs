@@ -35,38 +35,13 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>The requested abiturient.</returns>
         [HttpGet("{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<AbiturientDto> GetById(int id)
         {
             _logger.LogInformation($"Retrieving abiturient with ID: {id}");
             var abiturient = _abiturientService.GetById(id);
-            if (abiturient == null)
-            {
-                _logger.LogWarning($"Abiturient with ID {id} not found.");
-                return NotFound();
-            }
-            return Ok(abiturient);
+            return Ok(abiturient);            
         }
 
-        /// <summary>
-        /// Retrieves all abiturients from a specific city.
-        /// </summary>
-        /// <param name="city">The city name to filter abiturients by.</param>
-        /// <returns>A list of abiturients from the specified city.</returns>
-        [HttpGet("city/{city}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<IEnumerable<AbiturientDto>> GetByCity(string city)
-        {
-            _logger.LogInformation($"Retrieving abiturients from city: {city}");
-            var abiturients = _abiturientService.GetAbiturientsByCity(city);
-            if (!abiturients.Any())
-            {
-                _logger.LogWarning($"No abiturients found in city {city}.");
-                return NotFound();
-            }
-            return Ok(abiturients);
-        }
 
         /// <summary>
         /// Adds a new abiturient.
@@ -97,22 +72,13 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(int id, AbiturientDto abiturient)
         {
             if (id != abiturient.Id)
             {
                 _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, Abiturient ID: {abiturient.Id}");
-                return BadRequest();
+                return BadRequest();// с бд этот иф не нужно будет
             }
-
-            var existingAbiturient = _abiturientService.GetById(id);
-            if (existingAbiturient == null)
-            {
-                _logger.LogWarning($"Abiturient with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Updating abiturient with ID: {id}");
             _abiturientService.Update(abiturient);
             return NoContent();
@@ -125,19 +91,24 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            var existingAbiturient = _abiturientService.GetById(id);
-            if (existingAbiturient == null)
-            {
-                _logger.LogWarning($"Abiturient with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Deleting abiturient with ID: {id}");
             _abiturientService.Delete(id);
             return NoContent();
+        }
+        /// <summary>
+        /// Retrieves all abiturients from a specific city.
+        /// </summary>
+        /// <param name="city">The city name to filter abiturients by.</param>
+        /// <returns>A list of abiturients from the specified city.</returns>
+        [HttpGet("city/{city}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<AbiturientDto>> GetByCity(string city)
+        {
+            _logger.LogInformation($"Retrieving abiturients from city: {city}");
+            var abiturients = _abiturientService.GetAbiturientsByCity(city);
+            return Ok(abiturients);
         }
 
         /// <summary>
@@ -147,16 +118,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>A list of abiturients older than the specified age.</returns>
         [HttpGet("olderthan/{age:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<AbiturientDto>> GetOlderThan(int age)
         {
             _logger.LogInformation($"Retrieving abiturients older than {age} years.");
             var abiturients = _abiturientService.GetAbiturientsOlderThan(age);
-            if (!abiturients.Any())
-            {
-                _logger.LogWarning($"No abiturients older than {age} found.");
-                return NotFound();
-            }
             return Ok(abiturients);
         }
 
@@ -167,16 +132,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>A list of abiturients ordered by their exam results.</returns>
         [HttpGet("speciality/{specialityId:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<IEnumerable<AbiturientDto>> GetBySpeciality(int specialityId)
         {
             _logger.LogInformation($"Retrieving abiturients for speciality {specialityId}, ordered by exam results.");
             var abiturients = _abiturientService.GetAbiturientBySpecialityOrderedByRates(specialityId);
-            if (!abiturients.Any())
-            {
-                _logger.LogWarning($"No abiturients found for speciality {specialityId}.");
-                return NotFound();
-            }
             return Ok(abiturients);
         }
 
@@ -200,7 +159,7 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>A list of top-rated abiturients.</returns>
         [HttpGet("toprated/{count:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<AbiturientDto>> GetTopRatedAbiturients(int count)
+        public ActionResult<IEnumerable<AbiturientWithExamScoresDto>> GetTopRatedAbiturients(int count)
         {
             _logger.LogInformation($"Retrieving top {count} rated abiturients.");
             var abiturients = _abiturientService.GetTopRatedAbiturients(count);

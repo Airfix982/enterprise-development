@@ -35,16 +35,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>The requested exam result.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ExamResultDto> GetById(int id)
         {
             _logger.LogInformation($"Retrieving exam result with ID: {id}");
             var examResult = _examResultService.GetById(id);
-            if (examResult == null)
-            {
-                _logger.LogWarning($"Exam result with ID {id} not found.");
-                return NotFound();
-            }
             return Ok(examResult);
         }
 
@@ -77,7 +71,6 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(int id, ExamResultDto examResult)
         {
             if (id != examResult.Id)
@@ -85,14 +78,6 @@ namespace AdmissionCommittee.Api.Controllers
                 _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, ExamResult ID: {examResult.Id}");
                 return BadRequest();
             }
-
-            var existingExamResult = _examResultService.GetById(id);
-            if (existingExamResult == null)
-            {
-                _logger.LogWarning($"ExamResult with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Updating exam result with ID: {id}");
             _examResultService.Update(examResult);
             return NoContent();
@@ -105,16 +90,8 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            var existingExamResult = _examResultService.GetById(id);
-            if (existingExamResult == null)
-            {
-                _logger.LogWarning($"ExamResult with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Deleting exam result with ID: {id}");
             _examResultService.Delete(id);
             return NoContent();

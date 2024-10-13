@@ -35,16 +35,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>The requested application.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<ApplicationDto> GetById(int id)
         {
             _logger.LogInformation($"Retrieving application with ID: {id}");
             var application = _applicationService.GetById(id);
-            if (application == null)
-            {
-                _logger.LogWarning($"Application with ID {id} not found.");
-                return NotFound();
-            }
             return Ok(application);
         }
 
@@ -66,6 +60,7 @@ namespace AdmissionCommittee.Api.Controllers
             _logger.LogInformation($"Adding new application for Abiturient ID: {application.AbiturientId}");
             _applicationService.Add(application);
             return CreatedAtAction(nameof(GetById), new { id = application.Id }, application);
+            
         }
 
         /// <summary>
@@ -77,7 +72,6 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(int id, ApplicationDto application)
         {
             if (id != application.Id)
@@ -85,14 +79,6 @@ namespace AdmissionCommittee.Api.Controllers
                 _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, Application ID: {application.Id}");
                 return BadRequest();
             }
-
-            var existingApplication = _applicationService.GetById(id);
-            if (existingApplication == null)
-            {
-                _logger.LogWarning($"Application with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Updating application with ID: {id}");
             _applicationService.Update(application);
             return NoContent();
@@ -105,16 +91,8 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            var existingApplication = _applicationService.GetById(id);
-            if (existingApplication == null)
-            {
-                _logger.LogWarning($"Application with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Deleting application with ID: {id}");
             _applicationService.Delete(id);
             return NoContent();
