@@ -15,18 +15,24 @@ namespace AdmissionCommittee.Domain.Services
     /// </summary>
     public class AbiturientService(
          IAbiturientRepository abiturientRepository,
-         IApplicationService applicationService,
-         IExamResultService examResultService,
-         ISpecialityService specialityService) : IAbiturientService
+         IApplicationService applicationRepository,
+         IExamResultService examResultRepository,
+         ISpecialityService specialityRepository) : IAbiturientService
     {
         private readonly IAbiturientRepository _abiturientRepository = abiturientRepository;
-        private readonly IApplicationService _applicationService = applicationService;
-        private readonly IExamResultService _examResultService = examResultService;
-        private readonly ISpecialityService _specialityService = specialityService;
+        private readonly IApplicationService _applicationRepository = applicationRepository;
+        private readonly IExamResultService _examResultRepository = examResultRepository;
+        private readonly ISpecialityService _specialityRepository = specialityRepository;
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetAll() => _abiturientRepository.GetAll();
         /// <inheritdoc />
-        public Abiturient? GetById(int id) => _abiturientRepository.GetById(id);
+        public Abiturient GetById(int id)
+        {
+            var abiturient = _abiturientRepository.GetById(id);
+            if (abiturient == null)
+                throw new KeyNotFoundException("Abiturient not found");
+            return abiturient;
+        }
         /// <inheritdoc />
         public void Add(AbiturientDto abiturientDto)
         {
@@ -44,6 +50,8 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(AbiturientDto abiturientDto)
         {
+            if(GetById(abiturientDto.Id) == null)
+                throw new KeyNotFoundException("Abiturient not found");
             Abiturient abiturient = new()
             {
                 Id = abiturientDto.Id,
@@ -56,34 +64,53 @@ namespace AdmissionCommittee.Domain.Services
             _abiturientRepository.Update(abiturient);
         }
         /// <inheritdoc />
-        public void Delete(int id) => _abiturientRepository.Delete(id);
+        public void Delete(int id)
+        {
+            if (GetById(id) == null)
+                throw new KeyNotFoundException("Abiturient not found");
+            _abiturientRepository.Delete(id);
+        }
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetAbiturientsByCity(string city)
         {
-            return _abiturientRepository.GetAll().Where(e => e.City == city);
+            var abiturients = _abiturientRepository.GetAll().Where(e => e.City == city);
+            if(!abiturients.Any())
+                throw new KeyNotFoundException("Abiturients not found");
+            return abiturients;
         }
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetAbiturientsOlderThan(int age)
         {
-            return _abiturientRepository.GetAll().Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
+            var abiturients = _abiturientRepository.GetAll().Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
+            if (!abiturients.Any())
+                throw new KeyNotFoundException("Abiturients not found");
+            return abiturients;
         }
         /// <inheritdoc />
         public IEnumerable<Abiturient> GetAbiturientBySpecialityOrderedByRates(int specialityId)
         {
-            List<int> abiturientsIds = _applicationService.GetApplicationsBySpecialityId(specialityId)
+            if (_specialityRepository.GetById(specialityId) == null)
+                throw new InvalidOperationException($"No speciality with id: {specialityId}");
+            List<int> abiturientsIds = _applicationRepository.GetAll().Where(ap => ap.SpecialityId == specialityId)
                                                     .Select(a => a.AbiturientId).ToList();
-            return _abiturientRepository.GetAll().Where(ab => abiturientsIds.Contains(ab.Id))
-                   .OrderByDescending(a => _examResultService
-                                          .GetResultsByAbiturientId(a.Id).Sum(r => r.Result));
+            var abiturients = _abiturientRepository.GetAll().Where(ab => abiturientsIds.Contains(ab.Id))
+                   .OrderByDescending(a => _examResultRepository.GetAll().Where(er => er.AbiturientId == a.Id)
+                                          .Sum(r => r.Result));
+            if (!abiturients.Any())
+                throw new KeyNotFoundException("Abiturients not found");
+            return abiturients;
         }
         /// <inheritdoc />
         public IEnumerable<SpecialitiesCountAsFavoriteDto> GetAbiturientsCountByFirstPrioritySpecialities()
         {
             int firstPriority = 1;
 
-            var allSpecialities = _specialityService.GetAll();
-
-            var applicationsWithFirstPriority = _applicationService.GetApplicationsByPriority(firstPriority);
+            var allSpecialities = _specialityRepository.GetAll();
+            if (!allSpecialities.Any())
+            {
+                throw new InvalidOperationException("No specialities available.");
+            }
+            var applicationsWithFirstPriority = _applicationRepository.GetAll().Where(ap => ap.Priority == firstPriority);
 
             var groupedApplications = applicationsWithFirstPriority
                                         .GroupBy(a => a.SpecialityId)
@@ -101,26 +128,56 @@ namespace AdmissionCommittee.Domain.Services
             });
         }
         /// <inheritdoc />
-        public IEnumerable<Abiturient> GetTopRatedAbiturients(int maxCount)
+        public IEnumerable<AbiturientWithExamScoresDto> GetTopRatedAbiturients(int maxCount)
         {
-            return _abiturientRepository.GetAll().OrderByDescending(a => _examResultService
-                                                                         .GetResultsByAbiturientId(a.Id)
-                                                                         .Sum(r => r.Result)).Take(maxCount);
+            var abiturients = _abiturientRepository.GetAll()
+                .Select(ab => new
+                {
+                    Abiturient = ab,
+                    ResultsSum = _examResultRepository.GetAll()
+                        .Where(er => er.AbiturientId == ab.Id)
+                        .Sum(r => r.Result)
+                })
+                .OrderByDescending(ab => ab.ResultsSum)
+                .Take(maxCount);
+
+            if (!abiturients.Any())
+                throw new KeyNotFoundException("No abiturients available");
+
+            return abiturients.Select(ab => new AbiturientWithExamScoresDto
+            {
+                abiturient = ab.Abiturient,
+                resultsSum = ab.ResultsSum
+            });
         }
         /// <inheritdoc />
         public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturienstWithFavoriteSpeciality()
         {
-            var maxResultsAbiturientsIds = _examResultService.GetMaxResultsPerExam().Select(r => r.AbiturientId)
-                                                             .Distinct().ToList();
+            var maxResultsAbiturientsIds = _examResultRepository.GetAll().Where(er => er != null)
+               .GroupBy(er => er.ExamName)
+               .Select(g => g.OrderByDescending(er => er.Result).First())
+               .Where(er => er != null).Select(r => r.AbiturientId).Distinct().ToList();
+            if (!maxResultsAbiturientsIds.Any())
+            {
+                throw new KeyNotFoundException("No exam results found to calculate top-rated abiturients.");
+            }
             int firstPriority = 1;
             return _abiturientRepository
                   .GetAll().Where(ab => maxResultsAbiturientsIds.Contains(ab.Id))
-                  .Select(ab => new AbiturientMaxRateDto
+                  .Select(ab =>
                   {
-                      Abiturient = ab,
-                      FavoriteSpecialityId = _applicationService.GetApplicationsByAbiturientId(ab.Id)
-                                                                .Where(ap => ap.Priority == firstPriority)
-                                                                .Select(ap => ap.SpecialityId).First()
+                      var application = _applicationRepository.GetAll().Where(ap => ap.AbiturientId == ab.Id)
+                                                                    .Where(ap => ap.Priority == firstPriority)
+                                                                    .First();
+                      if (application == null)
+                      {
+                          throw new InvalidOperationException($"No first-priority application found for abiturient with ID {ab.Id}.");
+                      }
+                      return new AbiturientMaxRateDto
+                      {
+                          Abiturient = ab,
+                          FavoriteSpecialityId = application.SpecialityId
+                      };
                   });
         }
     }

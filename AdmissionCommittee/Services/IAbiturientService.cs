@@ -41,7 +41,7 @@ namespace AdmissionCommittee.Domain.Services
         /// </summary>
         /// <param name="maxCount">Max count to get of top rated abituriens</param>
         /// <returns>A collection of abiturients</returns>
-        public IEnumerable<Abiturient> GetTopRatedAbiturients(int maxCount);
+        public IEnumerable<AbiturientWithExamScoresDto> GetTopRatedAbiturients(int maxCount);
         /// <summary>
         /// Get abiturients and their favorite specialities who got max rate by each exam
         /// </summary>

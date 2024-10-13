@@ -35,16 +35,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>The requested speciality.</returns>
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<SpecialityDto> GetById(int id)
         {
             _logger.LogInformation($"Retrieving speciality with ID: {id}");
             var speciality = _specialityService.GetById(id);
-            if (speciality == null)
-            {
-                _logger.LogWarning($"Speciality with ID {id} not found.");
-                return NotFound();
-            }
             return Ok(speciality);
         }
 
@@ -77,7 +71,6 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(int id, SpecialityDto speciality)
         {
             if (id != speciality.Id)
@@ -85,14 +78,6 @@ namespace AdmissionCommittee.Api.Controllers
                 _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, Speciality ID: {speciality.Id}");
                 return BadRequest();
             }
-
-            var existingSpeciality = _specialityService.GetById(id);
-            if (existingSpeciality == null)
-            {
-                _logger.LogWarning($"Speciality with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Updating speciality with ID: {id}");
             _specialityService.Update(speciality);
             return NoContent();
@@ -105,16 +90,8 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the deletion is successful.</returns>
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Delete(int id)
         {
-            var speciality = _specialityService.GetById(id);
-            if (speciality == null)
-            {
-                _logger.LogWarning($"Speciality with ID {id} not found.");
-                return NotFound();
-            }
-
             _logger.LogInformation($"Deleting speciality with ID: {id}");
             _specialityService.Delete(id);
             return NoContent();
