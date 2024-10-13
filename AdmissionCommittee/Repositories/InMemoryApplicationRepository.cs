@@ -17,12 +17,6 @@ namespace AdmissionCommittee.Domain.Repositories
         /// </summary>
         /// <param name="applicationList">List of applications to initialize the repository with.</param>
         public InMemoryApplicationRepository(List<Application> applicationList) : base(applicationList) { }
-
-        /// <summary>
-        /// Updates an existing application with new data.
-        /// </summary>
-        /// <param name="application">The updated application data.</param>
-        public InMemoryApplicationRepository(List<Application> initData) : base(initData) { }
         /// <inheritdoc />
         public new void Update(Application application)
         {
