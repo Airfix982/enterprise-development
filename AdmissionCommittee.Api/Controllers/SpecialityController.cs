@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Services;
-using AdmissionCommittee.Domain.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AdmissionCommittee.Api.Controllers
 {

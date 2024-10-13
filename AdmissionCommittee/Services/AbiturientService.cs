@@ -1,11 +1,6 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Services
 {
@@ -50,7 +45,7 @@ namespace AdmissionCommittee.Domain.Services
         /// <inheritdoc />
         public void Update(AbiturientDto abiturientDto)
         {
-            if(GetById(abiturientDto.Id) == null)
+            if (GetById(abiturientDto.Id) == null)
                 throw new KeyNotFoundException("Abiturient not found");
             Abiturient abiturient = new()
             {
@@ -74,7 +69,7 @@ namespace AdmissionCommittee.Domain.Services
         public IEnumerable<Abiturient> GetAbiturientsByCity(string city)
         {
             var abiturients = _abiturientRepository.GetAll().Where(e => e.City == city);
-            if(!abiturients.Any())
+            if (!abiturients.Any())
                 throw new KeyNotFoundException("Abiturients not found");
             return abiturients;
         }

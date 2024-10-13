@@ -1,11 +1,6 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Services;
 
@@ -28,16 +23,16 @@ public class ExamResultService(
     public ExamResult GetById(int id)
     {
         var result = _examResultRepository.GetById(id);
-        if(result == null)
+        if (result == null)
             throw new KeyNotFoundException("Exam result not found");
         return result;
     }
     /// <inheritdoc />
     public void Add(ExamResultDto examResultDto)
     {
-        if(_abiturientRepository.GetById(examResultDto.AbiturientId) == null)
-           throw new InvalidOperationException("Adding result to not existing abiturient");
-        if(_examResultRepository.GetAll().Where(er => er.AbiturientId == examResultDto.AbiturientId)
+        if (_abiturientRepository.GetById(examResultDto.AbiturientId) == null)
+            throw new InvalidOperationException("Adding result to not existing abiturient");
+        if (_examResultRepository.GetAll().Where(er => er.AbiturientId == examResultDto.AbiturientId)
                                          .Select(er => er.ExamName).Contains(examResultDto.ExamName))
             throw new InvalidOperationException("Adding result to already added exam");
         ExamResult examResult = new()

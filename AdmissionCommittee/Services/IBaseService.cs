@@ -1,10 +1,5 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Services
 {
@@ -15,7 +10,7 @@ namespace AdmissionCommittee.Domain.Services
     /// <typeparam name="TDto">The data transfer object (DTO) type that implements <see cref="IDto"/>.</typeparam>
     public interface IBaseService<T, TDto>
         where T : class, IEntity
-        where TDto : class, IDto    
+        where TDto : class, IDto
     {
         /// <summary>
         /// Retrieves all entities of type <typeparamref name="T"/>.

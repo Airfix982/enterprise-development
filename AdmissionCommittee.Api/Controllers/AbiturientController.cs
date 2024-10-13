@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Services;
-using AdmissionCommittee.Domain.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AdmissionCommittee.Api.Controllers
 {
@@ -39,7 +39,7 @@ namespace AdmissionCommittee.Api.Controllers
         {
             _logger.LogInformation($"Retrieving abiturient with ID: {id}");
             var abiturient = _abiturientService.GetById(id);
-            return Ok(abiturient);            
+            return Ok(abiturient);
         }
 
 

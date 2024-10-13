@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Services;
-using AdmissionCommittee.Domain.Dto;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AdmissionCommittee.Api.Controllers
 {
@@ -60,7 +60,7 @@ namespace AdmissionCommittee.Api.Controllers
             _logger.LogInformation($"Adding new application for Abiturient ID: {application.AbiturientId}");
             _applicationService.Add(application);
             return CreatedAtAction(nameof(GetById), new { id = application.Id }, application);
-            
+
         }
 
         /// <summary>

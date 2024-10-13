@@ -1,8 +1,6 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AdmissionCommittee.Domain.Services
 {
@@ -24,7 +22,7 @@ namespace AdmissionCommittee.Domain.Services
         public Speciality GetById(int id)
         {
             var speciality = _specialityRepository.GetById(id);
-            if(speciality == null)
+            if (speciality == null)
                 throw new KeyNotFoundException("Speciality result not found");
             return speciality;
         }
