@@ -1,6 +1,7 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
+using AutoMapper;
 
 namespace AdmissionCommittee.Domain.Services;
 
@@ -14,91 +15,108 @@ namespace AdmissionCommittee.Domain.Services;
 public class ApplicationService(
     IAbiturientRepository abiturientRepository,
     ISpecialityRepository specialityRepository,
-    IApplicationRepository applicationRepository) : IApplicationService
+    IApplicationRepository applicationRepository,
+    IMapper mapper) : IApplicationService
 {
     private readonly IApplicationRepository _applicationRepository = applicationRepository;
     private readonly IAbiturientRepository _abiturientRepository = abiturientRepository;
     private readonly ISpecialityRepository _specialityRepository = specialityRepository;
+    private readonly IMapper _mapper = mapper;
+
     /// <inheritdoc />
-    public IEnumerable<Application> GetAll() => _applicationRepository.GetAll();
+    public IEnumerable<ApplicationDto> GetAll()
+    {
+        var applications = _applicationRepository.GetAll();
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
+    }
+
     /// <inheritdoc />
-    public Application GetById(int id)
+    public ApplicationDto GetById(int id)
     {
         var application = _applicationRepository.GetById(id);
         if (application == null)
             throw new KeyNotFoundException("Application not found");
-        return application;
+        return _mapper.Map<ApplicationDto>(application);
     }
+
     /// <inheritdoc />
     public int Add(ApplicationCreateDto applicationDto)
     {
         if (_abiturientRepository.GetById(applicationDto.AbiturientId) == null)
-            throw new InvalidOperationException("Application to not existing abiturient");
+            throw new InvalidOperationException("Application to non-existing abiturient");
+
         var abiturientApplicationsCount = GetApplicationsByAbiturientId(applicationDto.AbiturientId).Count();
         var maxApplicationsCount = 3;
-        if (abiturientApplicationsCount > maxApplicationsCount)
+
+        if (abiturientApplicationsCount >= maxApplicationsCount)
             throw new InvalidOperationException("Abiturient cannot have more than 3 applications");
+
         if (_specialityRepository.GetAll().All(s => s.Id != applicationDto.SpecialityId))
-            throw new InvalidOperationException("Application to not existing speciality");
-        if (GetApplicationsByAbiturientId(applicationDto.AbiturientId).Select(ap => ap.SpecialityId)
-                                                                      .Contains(applicationDto.SpecialityId))
-            throw new InvalidOperationException("Double application to the speciality you already picked");
-        Application application = new()
-        {
-            SpecialityId = applicationDto.SpecialityId,
-            AbiturientId = applicationDto.AbiturientId,
-            Priority = applicationDto.Priority
-        };
+            throw new InvalidOperationException("Application to non-existing speciality");
+
+        if (GetApplicationsByAbiturientId(applicationDto.AbiturientId)
+            .Any(ap => ap.SpecialityId == applicationDto.SpecialityId))
+            throw new InvalidOperationException("Double application to the speciality already picked");
+
+        var application = _mapper.Map<Application>(applicationDto);
         return _applicationRepository.Add(application);
     }
+
     /// <inheritdoc />
     public void Update(int id, ApplicationCreateDto applicationDto)
     {
         var application = GetById(id);
+
         if (_specialityRepository.GetAll().All(s => s.Id != applicationDto.SpecialityId))
-            throw new InvalidOperationException("Application to not existing speciality");
-        if (GetApplicationsByAbiturientId(applicationDto.AbiturientId).Select(ap => ap.SpecialityId)
-                                                                      .Contains(applicationDto.SpecialityId))
-            throw new InvalidOperationException("Double application to the speciality you already picked");
-        application.SpecialityId = applicationDto.SpecialityId;
-        application.AbiturientId = applicationDto.AbiturientId;
-        application.Priority = applicationDto.Priority;
-        _applicationRepository.Update(id, application);
+            throw new InvalidOperationException("Application to non-existing speciality");
+
+        if (GetApplicationsByAbiturientId(applicationDto.AbiturientId)
+            .Any(ap => ap.SpecialityId == applicationDto.SpecialityId))
+            throw new InvalidOperationException("Double application to the speciality already picked");
+
+        _mapper.Map(applicationDto, application);
+        _applicationRepository.Update(id, _mapper.Map<Application>(application));
     }
+
     /// <inheritdoc />
     public void Delete(int id)
     {
-        if (_applicationRepository.GetById(id) == null)
+        var application = _applicationRepository.GetById(id);
+        if (application == null)
             throw new KeyNotFoundException("Cannot delete a non-existing application");
+
         _applicationRepository.Delete(id);
     }
+
     /// <inheritdoc />
-    public IEnumerable<Application> GetApplicationsBySpecialityId(int specialityId)
+    public IEnumerable<ApplicationDto> GetApplicationsBySpecialityId(int specialityId)
     {
         var applications = _applicationRepository.GetAll().Where(ap => ap.SpecialityId == specialityId);
 
-        if (applications.Count() == 0)
+        if (!applications.Any())
             throw new KeyNotFoundException("No applications found for the specified speciality");
 
-        return applications;
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
     }
+
     /// <inheritdoc />
-    public IEnumerable<Application> GetApplicationsByPriority(int priority)
+    public IEnumerable<ApplicationDto> GetApplicationsByPriority(int priority)
     {
         var applications = _applicationRepository.GetAll().Where(ap => ap.Priority == priority);
 
-        if (applications.Count() == 0)
+        if (!applications.Any())
             throw new KeyNotFoundException("No applications found with the specified priority");
 
-        return applications;
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
     }
+
     /// <inheritdoc />
-    public IEnumerable<Application> GetApplicationsByAbiturientId(int abiturientId)
+    public IEnumerable<ApplicationDto> GetApplicationsByAbiturientId(int abiturientId)
     {
         if (_abiturientRepository.GetById(abiturientId) == null)
             throw new InvalidOperationException("Cannot retrieve applications for a non-existing abiturient");
 
         var applications = _applicationRepository.GetAll().Where(ap => ap.AbiturientId == abiturientId);
-        return applications;
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
     }
 }

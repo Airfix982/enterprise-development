@@ -13,19 +13,19 @@ public interface IAbiturientService : IBaseService<Abiturient, AbiturientDto, Ab
     /// </summary>
     /// <param name="city">City where abiturients are from</param>
     /// <returns>A collection of abiturients</returns>
-    public IEnumerable<Abiturient> GetAbiturientsByCity(string city);
+    public IEnumerable<AbiturientDto> GetAbiturientsByCity(string city);
     /// <summary>
     /// Get all abiturients older than selected age
     /// </summary>
     /// <param name="age">Age over wich the abiturient is</param>
     /// <returns>A collection of abiturients</returns>
-    public IEnumerable<Abiturient> GetAbiturientsOlderThan(int age);
+    public IEnumerable<AbiturientDto> GetAbiturientsOlderThan(int age);
     /// <summary>
     /// Get all abiturients who selected the speciality, ordered by their exam rates
     /// </summary>
     /// <param name="specialityId">Id of an speciality of an abiturient</param>
     /// <returns>A collection of abiturients</returns>
-    public IEnumerable<Abiturient> GetAbiturientBySpecialityOrderedByRates(int specialityId);
+    public IEnumerable<AbiturientDto> GetAbiturientBySpecialityOrderedByRates(int specialityId);
     /// <summary>
     /// Get abiturients count by specialities which are the favorite ones
     /// </summary>

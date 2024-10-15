@@ -13,10 +13,10 @@ public interface IExamResultService : IBaseService<ExamResult, ExamResultDto, Ex
     /// </summary>
     /// <param name="id">An abiturient id</param>
     /// <returns>A collection of exam results</returns>
-    public IEnumerable<ExamResult> GetResultsByAbiturientId(int id);
+    public IEnumerable<ExamResultDto> GetResultsByAbiturientId(int id);
     /// <summary>
     /// Get max results per each exam
     /// </summary>
     /// <returns>A collection of exam results</returns>
-    public IEnumerable<ExamResult> GetMaxResultsPerExam();
+    public IEnumerable<ExamResultDto> GetMaxResultsPerExam();
 }

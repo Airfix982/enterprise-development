@@ -15,16 +15,16 @@ public interface IBaseService<T, TDto, TCreateDto>
     where TCreateDto : class, IDto
 {
     /// <summary>
-    /// Retrieves all entities of type <typeparamref name="T"/>.
+    /// Retrieves all entities of type <typeparamref name="TDto"/>.
     /// </summary>
     /// <returns>An enumerable collection of all entities.</returns>
-    IEnumerable<T> GetAll();
+    IEnumerable<TDto> GetAll();
     /// <summary>
-    /// Retrieves a specific entity of type <typeparamref name="T"/> by its unique identifier.
+    /// Retrieves a specific entity of type <typeparamref name="TDto"/> by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
     /// <returns>The entity if found; otherwise, null.</returns>
-    T? GetById(int id);
+    TDto? GetById(int id);
     /// <summary>
     /// Adds a new entity based on the provided data transfer object (DTO) of type <typeparamref name="TDto"/>.
     /// </summary>

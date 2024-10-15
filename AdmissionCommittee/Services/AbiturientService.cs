@@ -1,6 +1,7 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
+using AutoMapper;
 
 namespace AdmissionCommittee.Domain.Services;
 
@@ -12,44 +13,39 @@ public class AbiturientService(
      IAbiturientRepository abiturientRepository,
      IApplicationRepository applicationRepository,
      IExamResultRepository examResultRepository,
-     ISpecialityRepository specialityRepository) : IAbiturientService
+     ISpecialityRepository specialityRepository,
+     IMapper mapper) : IAbiturientService
 {
     private readonly IAbiturientRepository _abiturientRepository = abiturientRepository;
     private readonly IApplicationRepository _applicationRepository = applicationRepository;
     private readonly IExamResultRepository _examResultRepository = examResultRepository;
     private readonly ISpecialityRepository _specialityRepository = specialityRepository;
+    private readonly IMapper _mapper = mapper;
     /// <inheritdoc />
-    public IEnumerable<Abiturient> GetAll() => _abiturientRepository.GetAll();
-    /// <inheritdoc />
-    public Abiturient GetById(int id)
+    public IEnumerable<AbiturientDto> GetAll()
+    {
+        var abiturients = _abiturientRepository.GetAll();
+        return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
+    }
+        /// <inheritdoc />
+        public AbiturientDto GetById(int id)
     {
         var abiturient = _abiturientRepository.GetById(id);
         if (abiturient == null)
             throw new KeyNotFoundException("Abiturient not found");
-        return abiturient;
+        return _mapper.Map<AbiturientDto>(abiturient);
     }
     /// <inheritdoc />
     public int Add(AbiturientCreateDto abiturientDto)
     {
-        Abiturient abiturient = new()
-        {
-            Name = abiturientDto.Name,
-            LastName = abiturientDto.LastName,
-            BirthdayDate = abiturientDto.BirthdayDate,
-            Country = abiturientDto.Country,
-            City = abiturientDto.City
-        };
+        var abiturient = _mapper.Map<Abiturient>(abiturientDto);
         return _abiturientRepository.Add(abiturient);
     }
     /// <inheritdoc />
     public void Update(int id, AbiturientCreateDto abiturientDto)
     {
-        var abiturient = GetById(id);
-        abiturient.Name = abiturientDto.Name;
-        abiturient.LastName = abiturientDto.LastName;
-        abiturient.BirthdayDate = abiturientDto.BirthdayDate;
-        abiturient.Country = abiturientDto.Country;
-        abiturient.City = abiturientDto.City;
+        var abiturient = _mapper.Map<Abiturient>(GetById(id));
+        _mapper.Map(abiturientDto, abiturient);
         _abiturientRepository.Update(id, abiturient);
     }
     /// <inheritdoc />
@@ -60,27 +56,27 @@ public class AbiturientService(
         _abiturientRepository.Delete(id);
     }
     /// <inheritdoc />
-    public IEnumerable<Abiturient> GetAbiturientsByCity(string city)
+    public IEnumerable<AbiturientDto> GetAbiturientsByCity(string city)
     {
         var abiturients = _abiturientRepository
                           .GetAll()
                           .Where(e => e.City == city);
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
-        return abiturients;
+        return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
     /// <inheritdoc />
-    public IEnumerable<Abiturient> GetAbiturientsOlderThan(int age)
+    public IEnumerable<AbiturientDto> GetAbiturientsOlderThan(int age)
     {
         var abiturients = _abiturientRepository
                           .GetAll()
                           .Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
-        return abiturients;
+        return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
     /// <inheritdoc />
-    public IEnumerable<Abiturient> GetAbiturientBySpecialityOrderedByRates(int specialityId)
+    public IEnumerable<AbiturientDto> GetAbiturientBySpecialityOrderedByRates(int specialityId)
     {
         if (_specialityRepository.GetById(specialityId) == null)
             throw new InvalidOperationException($"No speciality with id: {specialityId}");
@@ -105,7 +101,7 @@ public class AbiturientService(
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
 
-        return abiturients;
+        return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
 
     /// <inheritdoc />

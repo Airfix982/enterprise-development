@@ -1,4 +1,5 @@
 using AdmissionCommittee.Api.Middleware;
+using AdmissionCommittee.Domain;
 using AdmissionCommittee.Domain.Attributes;
 using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddSwaggerGen(c =>
 {
     c.IncludeXmlComments(xmlPath);

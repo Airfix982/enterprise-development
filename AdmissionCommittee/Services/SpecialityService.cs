@@ -1,6 +1,7 @@
 ﻿using AdmissionCommittee.Domain.Dto;
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
+using AutoMapper;
 
 namespace AdmissionCommittee.Domain.Services;
 
@@ -10,22 +11,28 @@ namespace AdmissionCommittee.Domain.Services;
 /// such as adding, updating, retrieving, and deleting specialities.
 /// </summary>
 public class SpecialityService(
-    ISpecialityRepository specialityRepository) : ISpecialityService
+    ISpecialityRepository specialityRepository,
+    IMapper mapper) : ISpecialityService
 {
     private readonly ISpecialityRepository _specialityRepository = specialityRepository;
+    private readonly IMapper _mapper = mapper;
+
     /// <inheritdoc />
-    public IEnumerable<Speciality> GetAll()
+    public IEnumerable<SpecialityDto> GetAll()
     {
-        return _specialityRepository.GetAll();
+        var specialities = _specialityRepository.GetAll();
+        return _mapper.Map<IEnumerable<SpecialityDto>>(specialities);
     }
+
     /// <inheritdoc />
-    public Speciality GetById(int id)
+    public SpecialityDto GetById(int id)
     {
         var speciality = _specialityRepository.GetById(id);
         if (speciality == null)
-            throw new KeyNotFoundException("Speciality result not found");
-        return speciality;
+            throw new KeyNotFoundException("Speciality not found");
+        return _mapper.Map<SpecialityDto>(speciality);
     }
+
     /// <inheritdoc />
     public int Add(SpecialityCreateDto specialityDto)
     {
@@ -33,28 +40,25 @@ public class SpecialityService(
         {
             throw new InvalidOperationException("Speciality with this number already exists");
         }
-        Speciality speciality = new()
-        {
-            Name = specialityDto.Name,
-            Number = specialityDto.Number,
-            Facility = specialityDto.Facility
-        };
+
+        var speciality = _mapper.Map<Speciality>(specialityDto);
         return _specialityRepository.Add(speciality);
     }
+
     /// <inheritdoc />
     public void Update(int id, SpecialityCreateDto specialityDto)
     {
         var speciality = GetById(id);
-        speciality.Name = specialityDto.Name;
-        speciality.Number = specialityDto.Number;
-        speciality.Facility = specialityDto.Facility;
-        
-        _specialityRepository.Update(id, speciality);
+        _mapper.Map(specialityDto, speciality);
+
+        _specialityRepository.Update(id, _mapper.Map<Speciality>(speciality));
     }
+
     /// <inheritdoc />
     public void Delete(int id)
     {
-        if (_specialityRepository.GetById(id) == null)
+        var speciality = _specialityRepository.GetById(id);
+        if (speciality == null)
         {
             throw new KeyNotFoundException("Cannot delete a non-existing speciality");
         }

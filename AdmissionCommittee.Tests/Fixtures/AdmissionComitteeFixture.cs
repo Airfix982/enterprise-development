@@ -1,5 +1,7 @@
-﻿using AdmissionCommittee.Domain.Repositories;
+﻿using AdmissionCommittee.Domain;
+using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
+using AutoMapper;
 
 namespace AdmissionCommittee.Tests.Fixtures;
 
@@ -13,8 +15,15 @@ public class AdmissionComitteeFixture
     public IApplicationService ApplicationService { get; private set; }
     public IExamResultService ExamResultService { get; private set; }
     public ISpecialityService SpecialityService { get; private set; }
+    public IMapper mapper { get; private set; }
     public AdmissionComitteeFixture()
     {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        mapper = config.CreateMapper();
+
         AbiturientRepository = new InMemoryAbiturientRepository(
         [
             new() { Id = 0, BirthdayDate = new DateTime(2005, 5, 18), City = "Moscow", Country = "Russia", Name = "Ivan", LastName = "Ivanov" },
@@ -104,9 +113,9 @@ public class AdmissionComitteeFixture
             new() { Id = 9, Number = "1005012I", Name = "Philosophy", Facility = "Humanities" }
         ]
         );
-        ApplicationService = new ApplicationService(AbiturientRepository, SpecialityRepository, ApplicationRepository);
-        ExamResultService = new ExamResultService(ExamResultRepository, AbiturientRepository);
-        SpecialityService = new SpecialityService(SpecialityRepository);
-        AbiturientService = new AbiturientService(AbiturientRepository, ApplicationRepository, ExamResultRepository, SpecialityRepository);
+        ApplicationService = new ApplicationService(AbiturientRepository, SpecialityRepository, ApplicationRepository, mapper);
+        ExamResultService = new ExamResultService(ExamResultRepository, AbiturientRepository, mapper);
+        SpecialityService = new SpecialityService(SpecialityRepository, mapper);
+        AbiturientService = new AbiturientService(AbiturientRepository, ApplicationRepository, ExamResultRepository, SpecialityRepository, mapper);
     }
 }
