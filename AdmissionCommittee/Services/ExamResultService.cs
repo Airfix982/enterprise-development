@@ -46,14 +46,10 @@ public class ExamResultService(
     /// <inheritdoc />
     public void Update(int id, ExamResultCreateDto examResultDto)
     {
-        if (_examResultRepository.GetById(id) == null)
-            throw new KeyNotFoundException("Cannot update a non-existing exam result");
-        ExamResult examResult = new()
-        {
-            AbiturientId = examResultDto.AbiturientId,
-            ExamName = examResultDto.ExamName,
-            Result = examResultDto.Result
-        };
+        var examResult = GetById(id);
+        examResult.AbiturientId = examResultDto.AbiturientId;
+        examResult.ExamName = examResultDto.ExamName;
+        examResult.Result = examResultDto.Result;
         _examResultRepository.Update(id, examResult);
     }
 

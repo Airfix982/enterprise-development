@@ -23,7 +23,7 @@ public interface IApplicationService : IBaseService<Application, ApplicationDto,
     /// <summary>
     /// Get all abiturient's applications by abiturient's id
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="abiturientId"></param>
     /// <returns>A collection of applications</returns>
     public IEnumerable<Application> GetApplicationsByAbiturientId(int abiturientId);
 }

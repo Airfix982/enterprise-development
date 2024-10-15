@@ -1,40 +1,39 @@
 ﻿using AdmissionCommittee.Domain.Models;
 
-namespace AdmissionCommittee.Domain.Repositories
+namespace AdmissionCommittee.Domain.Repositories;
+
+/// <summary>
+/// In-memory repository for managing abiturients.
+/// </summary>
+public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbiturientRepository
 {
     /// <summary>
-    /// In-memory repository for managing abiturients.
+    /// Default constructor that initializes an empty repository.
     /// </summary>
-    public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbiturientRepository
+    public InMemoryAbiturientRepository() : base() { }
+
+    /// <summary>
+    /// Constructor that initializes the repository with a predefined list of abiturients.
+    /// </summary>
+    /// <param name="initData">Initial list of abiturients.</param>
+
+    public InMemoryAbiturientRepository(List<Abiturient> initData) : base(initData) { }
+
+    /// <summary>
+    /// Updates an existing abiturient's details in the repository.
+    /// </summary>
+    /// <param name="abiturient">Abiturient object with updated information.</param>
+    /// <param name="id">Abiturient's id'.</param>
+    public override void Update(int id, Abiturient abiturient)
     {
-        /// <summary>
-        /// Default constructor that initializes an empty repository.
-        /// </summary>
-        public InMemoryAbiturientRepository() : base() { }
-
-        /// <summary>
-        /// Constructor that initializes the repository with a predefined list of abiturients.
-        /// </summary>
-        /// <param name="initData">Initial list of abiturients.</param>
-
-        public InMemoryAbiturientRepository(List<Abiturient> initData) : base(initData) { }
-
-        /// <summary>
-        /// Updates an existing abiturient's details in the repository.
-        /// </summary>
-        /// <param name="abiturient">Abiturient object with updated information.</param>
-        /// <param name="id">Abiturient's id'.</param>
-        public override void Update(int id, Abiturient abiturient)
+        var existingAbiturient = GetById(id);
+        if (existingAbiturient != null)
         {
-            var existingAbiturient = GetById(id);
-            if (existingAbiturient != null)
-            {
-                existingAbiturient.Name = abiturient.Name;
-                existingAbiturient.LastName = abiturient.LastName;
-                existingAbiturient.BirthdayDate = abiturient.BirthdayDate;
-                existingAbiturient.Country = abiturient.Country;
-                existingAbiturient.City = abiturient.City;
-            }
+            existingAbiturient.Name = abiturient.Name;
+            existingAbiturient.LastName = abiturient.LastName;
+            existingAbiturient.BirthdayDate = abiturient.BirthdayDate;
+            existingAbiturient.Country = abiturient.Country;
+            existingAbiturient.City = abiturient.City;
         }
     }
 }

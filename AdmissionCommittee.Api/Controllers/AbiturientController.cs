@@ -21,7 +21,7 @@ public class AbiturientController
     /// <returns>A list of abiturients.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientDto>> GetAll()
+    public ActionResult<IEnumerable<AbiturientDto>> Get()
     {
         _logger.LogInformation("Retrieving all abiturients.");
         var abiturients = _abiturientService.GetAll();
@@ -35,9 +35,9 @@ public class AbiturientController
     /// <returns>The requested abiturient.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<AbiturientDto> GetById(int id)
+    public ActionResult<AbiturientDto> Get(int id)
     {
-        _logger.LogInformation($"Retrieving abiturient with ID: {id}");
+        _logger.LogInformation("Retrieving abiturient with ID: {id}", id);
         var abiturient = _abiturientService.GetById(id);
         return Ok(abiturient);
     }
@@ -56,9 +56,9 @@ public class AbiturientController
             _logger.LogWarning("Invalid abiturient data provided.");
             return BadRequest(ModelState);
         }
-        _logger.LogInformation($"Adding new abiturient: {abiturient.Name}");
+        _logger.LogInformation("Adding new abiturient: {abiturient.Name}", abiturient.Name);
         var id = _abiturientService.Add(abiturient);
-        return CreatedAtAction(nameof(GetById), new { id }, abiturient);
+        return CreatedAtAction(nameof(Get), new { id }, abiturient);
     }
 
     /// <summary>
@@ -69,9 +69,9 @@ public class AbiturientController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, AbiturientCreateDto abiturient)
+    public IActionResult Update(int id, [FromBody]AbiturientCreateDto abiturient)
     {
-        _logger.LogInformation($"Updating abiturient with ID: {id}");
+        _logger.LogInformation("Updating abiturient with ID: {id}", id);
         _abiturientService.Update(id, abiturient);
         return NoContent();
     }
@@ -85,7 +85,7 @@ public class AbiturientController
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public IActionResult Delete(int id)
     {
-        _logger.LogInformation($"Deleting abiturient with ID: {id}");
+        _logger.LogInformation("Deleting abiturient with ID: {id}", id);
         _abiturientService.Delete(id);
         return NoContent();
     }
@@ -98,7 +98,7 @@ public class AbiturientController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<AbiturientDto>> GetByCity(string city)
     {
-        _logger.LogInformation($"Retrieving abiturients from city: {city}");
+        _logger.LogInformation("Retrieving abiturients from city: {city}", city);
         var abiturients = _abiturientService.GetAbiturientsByCity(city);
         return Ok(abiturients);
     }
@@ -112,7 +112,7 @@ public class AbiturientController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<AbiturientDto>> GetOlderThan(int age)
     {
-        _logger.LogInformation($"Retrieving abiturients older than {age} years.");
+        _logger.LogInformation("Retrieving abiturients older than {age} years.", age);
         var abiturients = _abiturientService.GetAbiturientsOlderThan(age);
         return Ok(abiturients);
     }
@@ -126,7 +126,7 @@ public class AbiturientController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<AbiturientDto>> GetBySpeciality(int specialityId)
     {
-        _logger.LogInformation($"Retrieving abiturients for speciality {specialityId}, ordered by exam results.");
+        _logger.LogInformation("Retrieving abiturients ordered by exam results for speciality {specialityId}.", specialityId);
         var abiturients = _abiturientService.GetAbiturientBySpecialityOrderedByRates(specialityId);
         return Ok(abiturients);
     }
@@ -153,7 +153,7 @@ public class AbiturientController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<AbiturientWithExamScoresDto>> GetTopRatedAbiturients(int count)
     {
-        _logger.LogInformation($"Retrieving top {count} rated abiturients.");
+        _logger.LogInformation("Retrieving top rated abiturients in count of: {count}", count);
         var abiturients = _abiturientService.GetTopRatedAbiturients(count);
         return Ok(abiturients);
     }

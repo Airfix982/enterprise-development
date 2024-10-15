@@ -13,7 +13,7 @@ public class BirthdateValidationAttribute : ValidationAttribute
     /// <param name="value"></param>
     /// <param name="validationContext"></param>
     /// <returns>validation result</returns>
-    protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+    protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
     {
         if (value is DateTime birthday)
         {
@@ -22,7 +22,7 @@ public class BirthdateValidationAttribute : ValidationAttribute
                 return new ValidationResult("Birthday cannot be in the future.");
             }
         }
-        return ValidationResult.Success;
+        return ValidationResult.Success!;
     }
 }
 

@@ -1,13 +1,12 @@
-﻿namespace AdmissionCommittee.Domain.Models
+﻿namespace AdmissionCommittee.Domain.Models;
+
+/// <summary>
+/// Base interface for models
+/// </summary>
+public interface IEntity
 {
     /// <summary>
-    /// Base interface for models
+    /// An unique identificator
     /// </summary>
-    public interface IEntity
-    {
-        /// <summary>
-        /// An unique identificator
-        /// </summary>
-        int Id { get; set; }
-    }
+    int Id { get; set; }
 }

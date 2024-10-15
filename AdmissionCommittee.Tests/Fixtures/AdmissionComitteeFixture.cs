@@ -107,6 +107,6 @@ public class AdmissionComitteeFixture
         ApplicationService = new ApplicationService(AbiturientRepository, SpecialityRepository, ApplicationRepository);
         ExamResultService = new ExamResultService(ExamResultRepository, AbiturientRepository);
         SpecialityService = new SpecialityService(SpecialityRepository);
-        AbiturientService = new AbiturientService(AbiturientRepository, ApplicationService, ExamResultService, SpecialityService);
+        AbiturientService = new AbiturientService(AbiturientRepository, ApplicationRepository, ExamResultRepository, SpecialityRepository);
     }
 }

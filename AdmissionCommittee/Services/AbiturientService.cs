@@ -10,14 +10,14 @@ namespace AdmissionCommittee.Domain.Services;
 /// </summary>
 public class AbiturientService(
      IAbiturientRepository abiturientRepository,
-     IApplicationService applicationRepository,
-     IExamResultService examResultRepository,
-     ISpecialityService specialityRepository) : IAbiturientService
+     IApplicationRepository applicationRepository,
+     IExamResultRepository examResultRepository,
+     ISpecialityRepository specialityRepository) : IAbiturientService
 {
     private readonly IAbiturientRepository _abiturientRepository = abiturientRepository;
-    private readonly IApplicationService _applicationRepository = applicationRepository;
-    private readonly IExamResultService _examResultRepository = examResultRepository;
-    private readonly ISpecialityService _specialityRepository = specialityRepository;
+    private readonly IApplicationRepository _applicationRepository = applicationRepository;
+    private readonly IExamResultRepository _examResultRepository = examResultRepository;
+    private readonly ISpecialityRepository _specialityRepository = specialityRepository;
     /// <inheritdoc />
     public IEnumerable<Abiturient> GetAll() => _abiturientRepository.GetAll();
     /// <inheritdoc />
@@ -44,16 +44,12 @@ public class AbiturientService(
     /// <inheritdoc />
     public void Update(int id, AbiturientCreateDto abiturientDto)
     {
-        if (GetById(id) == null)
-            throw new KeyNotFoundException("Abiturient not found");
-        Abiturient abiturient = new()
-        {
-            Name = abiturientDto.Name,
-            LastName = abiturientDto.LastName,
-            BirthdayDate = abiturientDto.BirthdayDate,
-            Country = abiturientDto.Country,
-            City = abiturientDto.City
-        };
+        var abiturient = GetById(id);
+        abiturient.Name = abiturientDto.Name;
+        abiturient.LastName = abiturientDto.LastName;
+        abiturient.BirthdayDate = abiturientDto.BirthdayDate;
+        abiturient.Country = abiturientDto.Country;
+        abiturient.City = abiturientDto.City;
         _abiturientRepository.Update(id, abiturient);
     }
     /// <inheritdoc />
@@ -66,7 +62,9 @@ public class AbiturientService(
     /// <inheritdoc />
     public IEnumerable<Abiturient> GetAbiturientsByCity(string city)
     {
-        var abiturients = _abiturientRepository.GetAll().Where(e => e.City == city);
+        var abiturients = _abiturientRepository
+                          .GetAll()
+                          .Where(e => e.City == city);
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return abiturients;
@@ -74,7 +72,9 @@ public class AbiturientService(
     /// <inheritdoc />
     public IEnumerable<Abiturient> GetAbiturientsOlderThan(int age)
     {
-        var abiturients = _abiturientRepository.GetAll().Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
+        var abiturients = _abiturientRepository
+                          .GetAll()
+                          .Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return abiturients;
@@ -84,53 +84,68 @@ public class AbiturientService(
     {
         if (_specialityRepository.GetById(specialityId) == null)
             throw new InvalidOperationException($"No speciality with id: {specialityId}");
-        List<int> abiturientsIds = _applicationRepository.GetAll().Where(ap => ap.SpecialityId == specialityId)
-                                                .Select(a => a.AbiturientId).ToList();
-        var abiturients = _abiturientRepository.GetAll().Where(ab => abiturientsIds.Contains(ab.Id))
-               .OrderByDescending(a => _examResultRepository.GetAll().Where(er => er.AbiturientId == a.Id)
-                                      .Sum(r => r.Result));
+
+        var abiturients = _applicationRepository.GetAll()
+            .Where(ap => ap.SpecialityId == specialityId)
+            .Join(_abiturientRepository.GetAll(),
+                  ap => ap.AbiturientId,
+                  ab => ab.Id,
+                  (ap, ab) => ab)
+            .GroupJoin(_examResultRepository.GetAll(),
+                       ab => ab.Id,
+                       er => er.AbiturientId,
+                       (abiturient, examResults) => new
+                       {
+                           Abiturient = abiturient,
+                           TotalResult = examResults.Sum(r => r.Result)
+                       })
+            .OrderByDescending(x => x.TotalResult)
+            .Select(x => x.Abiturient);
+
         if (abiturients.Count() == 0)
             throw new KeyNotFoundException("Abiturients not found");
+
         return abiturients;
     }
+
     /// <inheritdoc />
     public IEnumerable<SpecialitiesCountAsFavoriteDto> GetAbiturientsCountByFirstPrioritySpecialities()
     {
-        int firstPriority = 1;
+        var firstPriority = 1;
 
-        var allSpecialities = _specialityRepository.GetAll();
-        if (allSpecialities.Count() == 0)
+        var applicationsWithFirstPriority = _applicationRepository.GetAll()
+                                            .Where(ap => ap.Priority == firstPriority);
+
+        var result = _specialityRepository.GetAll()
+                    .GroupJoin(applicationsWithFirstPriority,
+                               speciality => speciality.Id,
+                               application => application.SpecialityId,
+                               (speciality, applications) => new SpecialitiesCountAsFavoriteDto
+                               {
+                                   SpecialityId = speciality.Id,
+                                   AbiturientsCount = applications.Count()
+                               })
+                    .ToList();
+
+        if (result.Count == 0)
         {
             throw new InvalidOperationException("No specialities available.");
         }
-        var applicationsWithFirstPriority = _applicationRepository.GetAll().Where(ap => ap.Priority == firstPriority);
-
-        var groupedApplications = applicationsWithFirstPriority
-                                    .GroupBy(a => a.SpecialityId)
-                                    .Select(group => new
-                                    {
-                                        SpecialityId = group.Key,
-                                        AbiturientsCount = group.Count()
-                                    })
-                                    .ToDictionary(g => g.SpecialityId, g => g.AbiturientsCount);
-
-        return allSpecialities.Select(speciality => new SpecialitiesCountAsFavoriteDto
-        {
-            SpecialityId = speciality.Id,
-            AbiturientsCount = groupedApplications.ContainsKey(speciality.Id) ? groupedApplications[speciality.Id] : 0
-        });
+        return result;
     }
+
     /// <inheritdoc />
     public IEnumerable<AbiturientWithExamScoresDto> GetTopRatedAbiturients(int maxCount)
     {
         var abiturients = _abiturientRepository.GetAll()
-            .Select(ab => new
-            {
-                Abiturient = ab,
-                ResultsSum = _examResultRepository.GetAll()
-                    .Where(er => er.AbiturientId == ab.Id)
-                    .Sum(r => r.Result)
-            })
+            .GroupJoin(_examResultRepository.GetAll(),
+                       ab => ab.Id,
+                       er => er.AbiturientId,
+                       (abiturient, examResults) => new
+                       {
+                           Abiturient = abiturient,
+                           ResultsSum = examResults.Sum(r => r.Result)
+                       })
             .OrderByDescending(ab => ab.ResultsSum)
             .Take(maxCount);
 
@@ -143,29 +158,41 @@ public class AbiturientService(
             resultsSum = ab.ResultsSum
         });
     }
+
     /// <inheritdoc />
     public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturienstWithFavoriteSpeciality()
     {
-        var maxResultsAbiturientsIds = _examResultRepository.GetAll().Where(er => er != null)
-           .GroupBy(er => er.ExamName)
-           .Select(g => g.OrderByDescending(er => er.Result).First())
-           .Where(er => er != null).Select(r => r.AbiturientId).Distinct().ToList();
+        var allExamResults = _examResultRepository.GetAll().ToList();
+        var maxResultsAbiturientsIds = allExamResults
+            .GroupBy(er => er.ExamName)
+            .Select(g => g.OrderByDescending(er => er.Result).First())
+            .Select(r => r.AbiturientId)
+            .Distinct()
+            .ToList();
+
         if (maxResultsAbiturientsIds.Count() == 0)
         {
             throw new KeyNotFoundException("No exam results found to calculate top-rated abiturients.");
         }
-        int firstPriority = 1;
+
+        var firstPriority = 1;
+        var allApplications = _applicationRepository.GetAll()
+            .Where(ap => ap.Priority == firstPriority)
+            .ToList();
+
         return _abiturientRepository
-              .GetAll().Where(ab => maxResultsAbiturientsIds.Contains(ab.Id))
+              .GetAll()
+              .Where(ab => maxResultsAbiturientsIds.Contains(ab.Id))
               .Select(ab =>
               {
-                  var application = _applicationRepository.GetAll().Where(ap => ap.AbiturientId == ab.Id)
-                                                                .Where(ap => ap.Priority == firstPriority)
-                                                                .First();
+                  var application = allApplications
+                      .FirstOrDefault(ap => ap.AbiturientId == ab.Id);
+
                   if (application == null)
                   {
                       throw new InvalidOperationException($"No first-priority application found for abiturient with ID {ab.Id}.");
                   }
+
                   return new AbiturientMaxRateDto
                   {
                       Abiturient = ab,
@@ -173,4 +200,5 @@ public class AbiturientService(
                   };
               });
     }
+
 }
