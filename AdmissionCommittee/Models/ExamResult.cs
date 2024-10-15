@@ -9,7 +9,7 @@ public class ExamResult : IEntity
     /// Unique Id
     /// </summary>
     /// <example>1</example>
-    public required int Id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// Id of an abiturient
     /// </summary>

@@ -6,7 +6,7 @@ namespace AdmissionCommittee.Domain.Services
     /// <summary>
     /// An interface for abiturient service
     /// </summary>
-    public interface IAbiturientService : IBaseService<Abiturient, AbiturientDto>
+    public interface IAbiturientService : IBaseService<Abiturient, AbiturientDto, AbiturientCreateDto>
     {
         /// <summary>
         /// Get all abiturients from the city

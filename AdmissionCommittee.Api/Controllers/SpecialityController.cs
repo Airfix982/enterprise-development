@@ -50,7 +50,7 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Add(SpecialityDto speciality)
+        public IActionResult Add(SpecialityCreateDto speciality)
         {
             if (!ModelState.IsValid)
             {
@@ -58,8 +58,8 @@ namespace AdmissionCommittee.Api.Controllers
                 return BadRequest(ModelState);
             }
             _logger.LogInformation($"Adding new speciality: {speciality.Name}");
-            _specialityService.Add(speciality);
-            return CreatedAtAction(nameof(GetById), new { id = speciality.Id }, speciality);
+            var id = _specialityService.Add(speciality);
+            return CreatedAtAction(nameof(GetById), new { id }, speciality);
         }
 
         /// <summary>
@@ -70,16 +70,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Update(int id, SpecialityDto speciality)
+        public IActionResult Update(int id, SpecialityCreateDto speciality)
         {
-            if (id != speciality.Id)
-            {
-                _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, Speciality ID: {speciality.Id}");
-                return BadRequest();
-            }
             _logger.LogInformation($"Updating speciality with ID: {id}");
-            _specialityService.Update(speciality);
+            _specialityService.Update(id, speciality);
             return NoContent();
         }
 

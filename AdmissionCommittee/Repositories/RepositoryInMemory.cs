@@ -8,6 +8,7 @@ namespace AdmissionCommittee.Domain.Repositories
     /// <typeparam name="T">The type of the entity.</typeparam>
     public class RepositoryInMemory<T> : IRepositoryInMemory<T> where T : class, IEntity
     {
+        private int _currentId;
         /// <summary>
         /// The in-memory context for storing entities of type T.
         /// </summary>
@@ -34,12 +35,14 @@ namespace AdmissionCommittee.Domain.Repositories
             return _context.FirstOrDefault(entity => entity.Id == id);
         }
         /// <inheritdoc />
-        public void Add(T entity)
+        public int Add(T entity)
         {
+            entity.Id = _currentId++;
             _context.Add(entity);
+            return entity.Id;
         }
         /// <inheritdoc />
-        public void Update(T entity)
+        public virtual void Update(int id, T entity)
         {
         }
         /// <inheritdoc />

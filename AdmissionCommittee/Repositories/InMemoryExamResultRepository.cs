@@ -22,9 +22,9 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Updates an existing exam result with new values.
         /// </summary>
         /// <param name="examResult">The exam result with updated values.</param>
-        public new void Update(ExamResult examResult)
+        public new void Update(int id, ExamResult examResult)
         {
-            var existingExamResult = GetById(examResult.Id);
+            var existingExamResult = GetById(id);
             if (existingExamResult != null)
             {
                 existingExamResult.AbiturientId = examResult.AbiturientId;

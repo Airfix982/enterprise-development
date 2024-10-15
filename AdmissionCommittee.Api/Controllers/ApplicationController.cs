@@ -50,7 +50,7 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Add(ApplicationDto application)
+        public IActionResult Add(ApplicationCreateDto application)
         {
             if (!ModelState.IsValid)
             {
@@ -58,8 +58,8 @@ namespace AdmissionCommittee.Api.Controllers
                 return BadRequest(ModelState);
             }
             _logger.LogInformation($"Adding new application for Abiturient ID: {application.AbiturientId}");
-            _applicationService.Add(application);
-            return CreatedAtAction(nameof(GetById), new { id = application.Id }, application);
+            var id = _applicationService.Add(application);
+            return CreatedAtAction(nameof(GetById), new { id }, application);
 
         }
 
@@ -71,16 +71,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Update(int id, ApplicationDto application)
+        public IActionResult Update(int id, ApplicationCreateDto application)
         {
-            if (id != application.Id)
-            {
-                _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, Application ID: {application.Id}");
-                return BadRequest();
-            }
             _logger.LogInformation($"Updating application with ID: {id}");
-            _applicationService.Update(application);
+            _applicationService.Update(id, application);
             return NoContent();
         }
 

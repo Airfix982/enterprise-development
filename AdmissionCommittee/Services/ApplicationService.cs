@@ -30,45 +30,43 @@ namespace AdmissionCommittee.Domain.Services
             return application;
         }
         /// <inheritdoc />
-        public void Add(ApplicationDto applicationDto)
+        public int Add(ApplicationCreateDto applicationDto)
         {
             if (_abiturientRepository.GetById(applicationDto.AbiturientId) == null)
                 throw new InvalidOperationException("Application to not existing abiturient");
             int abiturientApplicationsCount = GetApplicationsByAbiturientId(applicationDto.AbiturientId).Count();
             if (abiturientApplicationsCount > 3)
                 throw new InvalidOperationException("Abiturient cannot have more than 3 applications");
-            if (!_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Any())
+            if (_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Count() == 0)
                 throw new InvalidOperationException("Application to not existing speciality");
             if (GetApplicationsByAbiturientId(applicationDto.AbiturientId).Select(ap => ap.SpecialityId)
                                                                           .Contains(applicationDto.SpecialityId))
                 throw new InvalidOperationException("Double application to the speciality you already picked");
             Application application = new()
             {
-                Id = applicationDto.Id,
                 SpecialityId = applicationDto.SpecialityId,
                 AbiturientId = applicationDto.AbiturientId,
                 Priority = applicationDto.Priority
             };
-            _applicationRepository.Add(application);
+            return _applicationRepository.Add(application);
         }
         /// <inheritdoc />
-        public void Update(ApplicationDto applicationDto)
+        public void Update(int id, ApplicationCreateDto applicationDto)
         {
-            if (_applicationRepository.GetById(applicationDto.Id) == null)
+            if (_applicationRepository.GetById(id) == null)
                 throw new KeyNotFoundException("Cannot update a non-existing application");
-            if (!_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Any())
+            if (_specialityRepository.GetAll().Where(s => s.Id == applicationDto.SpecialityId).Count() == 0)
                 throw new InvalidOperationException("Application to not existing speciality");
             if (GetApplicationsByAbiturientId(applicationDto.AbiturientId).Select(ap => ap.SpecialityId)
                                                                           .Contains(applicationDto.SpecialityId))
                 throw new InvalidOperationException("Double application to the speciality you already picked");
             Application application = new()
             {
-                Id = applicationDto.Id,
                 SpecialityId = applicationDto.SpecialityId,
                 AbiturientId = applicationDto.AbiturientId,
                 Priority = applicationDto.Priority
             };
-            _applicationRepository.Update(application);
+            _applicationRepository.Update(id, application);
         }
         /// <inheritdoc />
         public void Delete(int id)
@@ -82,7 +80,7 @@ namespace AdmissionCommittee.Domain.Services
         {
             var applications = _applicationRepository.GetAll().Where(ap => ap.SpecialityId == specialityId);
 
-            if (!applications.Any())
+            if (applications.Count() == 0)
                 throw new KeyNotFoundException("No applications found for the specified speciality");
 
             return applications;
@@ -92,7 +90,7 @@ namespace AdmissionCommittee.Domain.Services
         {
             var applications = _applicationRepository.GetAll().Where(ap => ap.Priority == priority);
 
-            if (!applications.Any())
+            if (applications.Count() == 0)
                 throw new KeyNotFoundException("No applications found with the specified priority");
 
             return applications;

@@ -9,7 +9,7 @@ public class Speciality : IEntity
     /// Unique identifier of the speciality.
     /// </summary>
     /// <example>3001</example>
-    public required int Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// Speciality code or number used to identify the speciality.

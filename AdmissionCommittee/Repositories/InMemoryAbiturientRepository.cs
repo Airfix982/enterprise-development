@@ -23,9 +23,10 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Updates an existing abiturient's details in the repository.
         /// </summary>
         /// <param name="abiturient">Abiturient object with updated information.</param>
-        public new void Update(Abiturient abiturient)
+        /// <param name="id">Abiturient's id'.</param>
+        public override void Update(int id, Abiturient abiturient)
         {
-            var existingAbiturient = GetById(abiturient.Id);
+            var existingAbiturient = GetById(id);
             if (existingAbiturient != null)
             {
                 existingAbiturient.Name = abiturient.Name;

@@ -50,7 +50,7 @@ namespace AdmissionCommittee.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Add(ExamResultDto examResult)
+        public IActionResult Add(ExamResultCreateDto examResult)
         {
             if (!ModelState.IsValid)
             {
@@ -58,8 +58,8 @@ namespace AdmissionCommittee.Api.Controllers
                 return BadRequest(ModelState);
             }
             _logger.LogInformation($"Adding new exam result for Abiturient ID: {examResult.AbiturientId}");
-            _examResultService.Add(examResult);
-            return CreatedAtAction(nameof(GetById), new { id = examResult.Id }, examResult);
+            var id = _examResultService.Add(examResult);
+            return CreatedAtAction(nameof(GetById), new { id }, examResult);
         }
 
         /// <summary>
@@ -70,16 +70,10 @@ namespace AdmissionCommittee.Api.Controllers
         /// <returns>No content if the update is successful.</returns>
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Update(int id, ExamResultDto examResult)
+        public IActionResult Update(int id, ExamResultCreateDto examResult)
         {
-            if (id != examResult.Id)
-            {
-                _logger.LogWarning($"Update failed: ID mismatch. URL ID: {id}, ExamResult ID: {examResult.Id}");
-                return BadRequest();
-            }
             _logger.LogInformation($"Updating exam result with ID: {id}");
-            _examResultService.Update(examResult);
+            _examResultService.Update(id, examResult);
             return NoContent();
         }
 

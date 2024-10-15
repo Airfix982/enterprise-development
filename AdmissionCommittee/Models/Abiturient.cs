@@ -8,7 +8,7 @@ public class Abiturient : IEntity
     /// Unique identifier of the abiturient.
     /// </summary>
     /// <example>101</example>
-    public required int Id { get; set; }
+    public int Id { get; set; }
     /// <summary>
     /// Abiturient's name
     /// </summary>

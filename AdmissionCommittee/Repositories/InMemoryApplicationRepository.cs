@@ -18,9 +18,9 @@ namespace AdmissionCommittee.Domain.Repositories
         /// <param name="applicationList">List of applications to initialize the repository with.</param>
         public InMemoryApplicationRepository(List<Application> applicationList) : base(applicationList) { }
         /// <inheritdoc />
-        public new void Update(Application application)
+        public new void Update(int id, Application application)
         {
-            var existingApplication = GetById(application.Id);
+            var existingApplication = GetById(id);
             if (existingApplication != null)
             {
                 existingApplication.SpecialityId = application.SpecialityId;

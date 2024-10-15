@@ -9,7 +9,7 @@ public class Application : IEntity
     /// Unique identifier of the application.
     /// </summary>
     /// <example>101</example>
-    public required int Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// Identifier of the speciality that the abiturient is applying for.

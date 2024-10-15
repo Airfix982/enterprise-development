@@ -8,9 +8,11 @@ namespace AdmissionCommittee.Domain.Services
     /// </summary>
     /// <typeparam name="T">The domain entity type that implements <see cref="IEntity"/>.</typeparam>
     /// <typeparam name="TDto">The data transfer object (DTO) type that implements <see cref="IDto"/>.</typeparam>
-    public interface IBaseService<T, TDto>
+    /// <typeparam name="TCreateDto">The data transfer object (DTO) type that implements <see cref="IDto"/>.</typeparam>
+    public interface IBaseService<T, TDto, TCreateDto>
         where T : class, IEntity
         where TDto : class, IDto
+        where TCreateDto : class, IDto
     {
         /// <summary>
         /// Retrieves all entities of type <typeparamref name="T"/>.
@@ -27,12 +29,14 @@ namespace AdmissionCommittee.Domain.Services
         /// Adds a new entity based on the provided data transfer object (DTO) of type <typeparamref name="TDto"/>.
         /// </summary>
         /// <param name="dto">The data transfer object (DTO) containing the data for the new entity.</param>
-        void Add(TDto dto);
+        /// <returns>Id of the added entity</returns>
+        int Add(TCreateDto dto);
         /// <summary>
         /// Updates an existing entity using the provided data transfer object (DTO) of type <typeparamref name="TDto"/>.
         /// </summary>
         /// <param name="dto">The data transfer object (DTO) containing updated data for the entity.</param>
-        void Update(TDto dto);
+        /// <param name="id">The unique identifier of the entity.</param>
+        void Update(int id, TCreateDto dto);
         /// <summary>
         /// Deletes an entity of type <typeparamref name="T"/> by its unique identifier.
         /// </summary>

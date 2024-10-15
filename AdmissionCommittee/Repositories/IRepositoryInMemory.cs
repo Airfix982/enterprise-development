@@ -23,12 +23,14 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Updates an existing entity in the in-memory context.
         /// </summary>
         /// <param name="entity">The entity with updated values.</param>
-        public void Update(T entity);
+        /// <param name="id">The entity's id'.</param>
+        public void Update(int id, T entity);
         /// <summary>
         /// Adds a new entity to the in-memory context.
         /// </summary>
         /// <param name="entity">The entity to add.</param>
-        public void Add(T entity);
+        /// <returns name="int"/>The added entity's id.</returns>
+        public int Add(T entity);
         /// <summary>
         /// Deletes an entity from the in-memory context by its unique identifier.
         /// </summary>

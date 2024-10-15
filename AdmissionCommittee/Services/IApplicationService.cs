@@ -6,7 +6,7 @@ namespace AdmissionCommittee.Domain.Services;
 /// <summary>
 /// An interface for application service
 /// </summary>
-public interface IApplicationService : IBaseService<Application, ApplicationDto>
+public interface IApplicationService : IBaseService<Application, ApplicationDto, ApplicationCreateDto>
 {
     /// <summary>
     /// Get ids of students who selected the speciality

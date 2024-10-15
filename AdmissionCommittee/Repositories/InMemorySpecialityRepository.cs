@@ -22,9 +22,9 @@ namespace AdmissionCommittee.Domain.Repositories
         /// Updates an existing speciality with new data.
         /// </summary>
         /// <param name="speciality">The updated speciality entity.</param>
-        public new void Update(Speciality speciality)
+        public new void Update(int id, Speciality speciality)
         {
-            var existingSpeciality = GetById(speciality.Id);
+            var existingSpeciality = GetById(id);
             if (existingSpeciality != null)
             {
                 existingSpeciality.Number = speciality.Number;

@@ -27,7 +27,7 @@ namespace AdmissionCommittee.Domain.Services
             return speciality;
         }
         /// <inheritdoc />
-        public void Add(SpecialityDto specialityDto)
+        public int Add(SpecialityCreateDto specialityDto)
         {
             if (_specialityRepository.GetAll().Any(s => s.Number == specialityDto.Number))
             {
@@ -35,28 +35,26 @@ namespace AdmissionCommittee.Domain.Services
             }
             Speciality speciality = new()
             {
-                Id = specialityDto.Id,
                 Name = specialityDto.Name,
                 Number = specialityDto.Number,
                 Facility = specialityDto.Facility
             };
-            _specialityRepository.Add(speciality);
+            return _specialityRepository.Add(speciality);
         }
         /// <inheritdoc />
-        public void Update(SpecialityDto specialityDto)
+        public void Update(int id, SpecialityCreateDto specialityDto)
         {
-            if (_specialityRepository.GetById(specialityDto.Id) == null)
+            if (_specialityRepository.GetById(id) == null)
             {
                 throw new KeyNotFoundException("Cannot update a non-existing speciality");
             }
             Speciality speciality = new()
             {
-                Id = specialityDto.Id,
                 Name = specialityDto.Name,
                 Number = specialityDto.Number,
                 Facility = specialityDto.Facility
             };
-            _specialityRepository.Update(speciality);
+            _specialityRepository.Update(id, speciality);
         }
         /// <inheritdoc />
         public void Delete(int id)

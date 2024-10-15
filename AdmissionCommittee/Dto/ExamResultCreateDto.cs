@@ -1,19 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Dto;
-
 /// <summary>
 /// Dto for exam result.
 /// </summary>
-public class ExamResultDto : IDto
+public class ExamResultCreateDto : IDto
 {
-    /// <summary>
-    /// Unique Id of the exam result.
-    /// </summary>
-    [Required]
-    [JsonPropertyName("id")]
-    public required int Id { get; set; }
     /// <summary>
     /// Id of the abiturient who took the exam.
     /// </summary>

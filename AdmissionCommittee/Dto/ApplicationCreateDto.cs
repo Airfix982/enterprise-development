@@ -1,18 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Dto;
-
 /// <summary>
-/// Dto for an application submitted by an abiturient.
+/// Dto for an application submitted by an abiturient adding.
 /// </summary>
-public class ApplicationDto : IDto
+public class ApplicationCreateDto : IDto
 {
-    /// <summary>
-    /// Unique Id of the application.
-    /// </summary>
-    [JsonPropertyName("id")]
-    public required int Id { get; set; }
     /// <summary>
     /// Id of the speciality applied for.
     /// </summary>

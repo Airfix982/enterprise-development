@@ -6,7 +6,7 @@ namespace AdmissionCommittee.Domain.Services;
 /// <summary>
 /// An interface for exam results service
 /// </summary>
-public interface IExamResultService : IBaseService<ExamResult, ExamResultDto>
+public interface IExamResultService : IBaseService<ExamResult, ExamResultDto, ExamResultCreateDto>
 {
     /// <summary>
     /// Get all the exam results by an abiturient id

@@ -1,6 +1,3 @@
-﻿namespace AdmissionCommittee.Domain.Dto
-{
-    public interface IDto
-    {
-    }
-}
+﻿namespace AdmissionCommittee.Domain.Dto;
+
+public interface IDto;

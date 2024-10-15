@@ -6,6 +6,6 @@ namespace AdmissionCommittee.Domain.Services;
 /// <summary>
 /// An interface for speciality service
 /// </summary>
-public interface ISpecialityService : IBaseService<Speciality, SpecialityDto>
+public interface ISpecialityService : IBaseService<Speciality, SpecialityDto, SpecialityCreateDto>
 {
 }

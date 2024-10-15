@@ -28,7 +28,7 @@ public class ExamResultService(
         return result;
     }
     /// <inheritdoc />
-    public void Add(ExamResultDto examResultDto)
+    public int Add(ExamResultCreateDto examResultDto)
     {
         if (_abiturientRepository.GetById(examResultDto.AbiturientId) == null)
             throw new InvalidOperationException("Adding result to not existing abiturient");
@@ -37,26 +37,24 @@ public class ExamResultService(
             throw new InvalidOperationException("Adding result to already added exam");
         ExamResult examResult = new()
         {
-            Id = examResultDto.Id,
             AbiturientId = examResultDto.AbiturientId,
             ExamName = examResultDto.ExamName,
             Result = examResultDto.Result
         };
-        _examResultRepository.Add(examResult);
+        return _examResultRepository.Add(examResult);
     }
     /// <inheritdoc />
-    public void Update(ExamResultDto examResultDto)
+    public void Update(int id, ExamResultCreateDto examResultDto)
     {
-        if (_examResultRepository.GetById(examResultDto.Id) == null)
+        if (_examResultRepository.GetById(id) == null)
             throw new KeyNotFoundException("Cannot update a non-existing exam result");
         ExamResult examResult = new()
         {
-            Id = examResultDto.Id,
             AbiturientId = examResultDto.AbiturientId,
             ExamName = examResultDto.ExamName,
             Result = examResultDto.Result
         };
-        _examResultRepository.Update(examResult);
+        _examResultRepository.Update(id, examResult);
     }
 
     /// <inheritdoc />
@@ -73,7 +71,7 @@ public class ExamResultService(
         if (_abiturientRepository.GetById(abiturientId) == null)
             throw new InvalidOperationException("Cannot retrieve results for a non-existing abiturient");
         var results = _examResultRepository.GetAll().Where(er => er.AbiturientId == abiturientId);
-        if (!results.Any())
+        if (results.Count() == 0)
             throw new KeyNotFoundException("No exam results found for the abiturient");
         return results;
     }
@@ -85,7 +83,7 @@ public class ExamResultService(
                .GroupBy(er => er.ExamName)
                .Select(g => g.OrderByDescending(er => er.Result).First())
                .Where(er => er != null);
-        if (!maxResults.Any())
+        if (maxResults.Count() == 0)
             throw new InvalidOperationException("No exam results found for any exam");
 
         return maxResults;

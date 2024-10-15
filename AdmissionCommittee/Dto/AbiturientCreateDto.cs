@@ -1,19 +1,18 @@
 ﻿using AdmissionCommittee.Domain.Attributes;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Dto;
-
 /// <summary>
-/// Dto for an abiturient.
+/// Dto for an abiturient adding.
 /// </summary>
-public class AbiturientDto : IDto
+public class AbiturientCreateDto : IDto
 {
-    /// <summary>
-    /// Unique Id of the abiturient.
-    /// </summary>
-    [JsonPropertyName("id")]
-    public required int Id { get; set; }
     /// <summary>
     /// First name of the abiturient.
     /// </summary>
