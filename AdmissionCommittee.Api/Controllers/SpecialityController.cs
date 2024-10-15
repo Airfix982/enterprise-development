@@ -50,7 +50,7 @@ public class SpecialityController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody]SpecialityCreateDto speciality)
+    public IActionResult Add([FromBody] SpecialityCreateDto speciality)
     {
         if (!ModelState.IsValid)
         {
@@ -70,7 +70,7 @@ public class SpecialityController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody]SpecialityCreateDto speciality)
+    public IActionResult Update(int id, [FromBody] SpecialityCreateDto speciality)
     {
         _logger.LogInformation("Updating speciality with ID: {id}", id);
         _specialityService.Update(id, speciality);

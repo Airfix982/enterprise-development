@@ -49,7 +49,7 @@ public class AbiturientController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody]AbiturientCreateDto abiturient)
+    public IActionResult Add([FromBody] AbiturientCreateDto abiturient)
     {
         if (!ModelState.IsValid)
         {
@@ -69,7 +69,7 @@ public class AbiturientController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody]AbiturientCreateDto abiturient)
+    public IActionResult Update(int id, [FromBody] AbiturientCreateDto abiturient)
     {
         _logger.LogInformation("Updating abiturient with ID: {id}", id);
         _abiturientService.Update(id, abiturient);

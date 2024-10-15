@@ -50,7 +50,7 @@ public class ExamResultController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody]ExamResultCreateDto examResult)
+    public IActionResult Add([FromBody] ExamResultCreateDto examResult)
     {
         if (!ModelState.IsValid)
         {
@@ -70,7 +70,7 @@ public class ExamResultController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody]ExamResultCreateDto examResult)
+    public IActionResult Update(int id, [FromBody] ExamResultCreateDto examResult)
     {
         _logger.LogInformation("Updating exam result with ID: {id}", id);
         _examResultService.Update(id, examResult);

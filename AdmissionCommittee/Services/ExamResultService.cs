@@ -57,8 +57,8 @@ public class ExamResultService(
     /// <inheritdoc />
     public void Update(int id, ExamResultCreateDto examResultDto)
     {
-        var examResult = GetById(id); 
-        _mapper.Map(examResultDto, examResult); 
+        var examResult = GetById(id);
+        _mapper.Map(examResultDto, examResult);
         _examResultRepository.Update(id, _mapper.Map<ExamResult>(examResult));
     }
 

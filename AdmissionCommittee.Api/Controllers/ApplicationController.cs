@@ -50,7 +50,7 @@ public class ApplicationController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody]ApplicationCreateDto application)
+    public IActionResult Add([FromBody] ApplicationCreateDto application)
     {
         if (!ModelState.IsValid)
         {
@@ -71,7 +71,7 @@ public class ApplicationController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody]ApplicationCreateDto application)
+    public IActionResult Update(int id, [FromBody] ApplicationCreateDto application)
     {
         _logger.LogInformation("Updating application with ID: {id}", id);
         _applicationService.Update(id, application);

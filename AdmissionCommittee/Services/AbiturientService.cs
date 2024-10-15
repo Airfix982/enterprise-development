@@ -27,8 +27,8 @@ public class AbiturientService(
         var abiturients = _abiturientRepository.GetAll();
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
-        /// <inheritdoc />
-        public AbiturientDto GetById(int id)
+    /// <inheritdoc />
+    public AbiturientDto GetById(int id)
     {
         var abiturient = _abiturientRepository.GetById(id);
         if (abiturient == null)
