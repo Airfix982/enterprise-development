@@ -167,7 +167,7 @@ public class AbiturientController
     public ActionResult<IEnumerable<AbiturientMaxRateDto>> GetMaxRatedAbiturientsWithFavoriteSpeciality()
     {
         _logger.LogInformation("Retrieving abiturients with maximum exam results and their favorite speciality.");
-        var result = _abiturientService.GetMaxRatedAbiturienstWithFavoriteSpeciality();
+        var result = _abiturientService.GetMaxRatedAbiturientsWithFavoriteSpeciality();
         return Ok(result);
     }
 }
