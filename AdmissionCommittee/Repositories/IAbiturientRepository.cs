@@ -3,6 +3,6 @@
 namespace AdmissionCommittee.Domain.Repositories;
 
 /// <summary>
-/// Abiturien repository interface
+/// Abiturient repository interface
 /// </summary>
 public interface IAbiturientRepository : IRepository<Abiturient>;

@@ -34,12 +34,12 @@ public interface IAbiturientService : IBaseService<Abiturient, AbiturientDto, Ab
     /// <summary>
     /// Get maxCount top-rated abiturients
     /// </summary>
-    /// <param name="maxCount">Max count to get of top rated abituriens</param>
+    /// <param name="maxCount">Max count to get of top rated abiturients</param>
     /// <returns>A collection of abiturients</returns>
     public IEnumerable<AbiturientWithExamScoresDto> GetTopRatedAbiturients(int maxCount);
     /// <summary>
     /// Get abiturients and their favorite specialities who got max rate by each exam
     /// </summary>
     /// <returns>A collection of abiturients</returns>
-    public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturienstWithFavoriteSpeciality();
+    public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturientsWithFavoriteSpeciality();
 }

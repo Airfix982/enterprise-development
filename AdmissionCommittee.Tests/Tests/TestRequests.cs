@@ -115,7 +115,7 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     [Fact]
     public void TestTopRatedAbiturients()
     {
-        var query = _fixture.AbiturientService.GetTopRatedAbiturients(5).Select(a => a.abiturient.Id).ToList();
+        var query = _fixture.AbiturientService.GetTopRatedAbiturients(5).Select(a => a.Abiturient.Id).ToList();
 
         Assert.Equivalent(5, query.Count);
         Assert.Equal([3, 9, 7, 5, 1], query);
@@ -127,7 +127,7 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     [Fact]
     public void TestFavoriteSpecialitiesByTopRatedAbiturients()
     {
-        var query = _fixture.AbiturientService.GetMaxRatedAbiturienstWithFavoriteSpeciality().ToList();
+        var query = _fixture.AbiturientService.GetMaxRatedAbiturientsWithFavoriteSpeciality().ToList();
 
         Assert.Equivalent(5, query.Count);
         Assert.Equal([3, 4, 5, 7, 9],

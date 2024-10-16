@@ -51,7 +51,8 @@ public class AbiturientService(
     /// <inheritdoc />
     public void Delete(int id)
     {
-        if (GetById(id) == null)
+        var abiturient = _abiturientRepository.GetById(id);
+        if (abiturient == null)
             throw new KeyNotFoundException("Abiturient not found");
         _abiturientRepository.Delete(id);
     }
@@ -60,8 +61,9 @@ public class AbiturientService(
     {
         var abiturients = _abiturientRepository
                           .GetAll()
-                          .Where(e => e.City == city);
-        if (abiturients.Count() == 0)
+                          .Where(e => e.City == city)
+                          .ToList();
+        if (abiturients.Count == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
@@ -70,8 +72,9 @@ public class AbiturientService(
     {
         var abiturients = _abiturientRepository
                           .GetAll()
-                          .Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age);
-        if (abiturients.Count() == 0)
+                          .Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age)
+                          .ToList();
+        if (abiturients.Count == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
@@ -96,9 +99,10 @@ public class AbiturientService(
                            TotalResult = examResults.Sum(r => r.Result)
                        })
             .OrderByDescending(x => x.TotalResult)
-            .Select(x => x.Abiturient);
+            .Select(x => x.Abiturient)
+            .ToList();
 
-        if (abiturients.Count() == 0)
+        if (abiturients.Count == 0)
             throw new KeyNotFoundException("Abiturients not found");
 
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
@@ -143,20 +147,21 @@ public class AbiturientService(
                            ResultsSum = examResults.Sum(r => r.Result)
                        })
             .OrderByDescending(ab => ab.ResultsSum)
-            .Take(maxCount);
+            .Take(maxCount)
+            .ToList();
 
-        if (abiturients.Count() == 0)
+        if (abiturients.Count == 0)
             throw new KeyNotFoundException("No abiturients available");
 
         return abiturients.Select(ab => new AbiturientWithExamScoresDto
         {
-            abiturient = ab.Abiturient,
-            resultsSum = ab.ResultsSum
+            Abiturient = ab.Abiturient,
+            ResultsSum = ab.ResultsSum
         });
     }
 
     /// <inheritdoc />
-    public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturienstWithFavoriteSpeciality()
+    public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturientsWithFavoriteSpeciality()
     {
         var allExamResults = _examResultRepository.GetAll().ToList();
         var maxResultsAbiturientsIds = allExamResults
@@ -166,7 +171,7 @@ public class AbiturientService(
             .Distinct()
             .ToList();
 
-        if (maxResultsAbiturientsIds.Count() == 0)
+        if (maxResultsAbiturientsIds.Count == 0)
         {
             throw new KeyNotFoundException("No exam results found to calculate top-rated abiturients.");
         }

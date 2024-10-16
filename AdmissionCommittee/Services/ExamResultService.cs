@@ -44,10 +44,11 @@ public class ExamResultService(
         if (_abiturientRepository.GetById(examResultDto.AbiturientId) == null)
             throw new InvalidOperationException("Adding result to a non-existing abiturient");
 
-        if (_examResultRepository.GetAll()
-            .Where(er => er.AbiturientId == examResultDto.AbiturientId)
-            .Select(er => er.ExamName)
-            .Contains(examResultDto.ExamName))
+        var isExamAlreadyAdded = _examResultRepository
+                                 .GetAll()
+                                 .Any(er => er.AbiturientId == examResultDto.AbiturientId 
+                                             && er.ExamName == examResultDto.ExamName);
+        if (isExamAlreadyAdded)
             throw new InvalidOperationException("Adding result to an already added exam");
 
         var examResult = _mapper.Map<ExamResult>(examResultDto);
@@ -78,8 +79,11 @@ public class ExamResultService(
         if (_abiturientRepository.GetById(abiturientId) == null)
             throw new InvalidOperationException("Cannot retrieve results for a non-existing abiturient");
 
-        var results = _examResultRepository.GetAll().Where(er => er.AbiturientId == abiturientId);
-        if (!results.Any())
+        var results = _examResultRepository
+                      .GetAll()
+                      .Where(er => er.AbiturientId == abiturientId)
+                      .ToList();
+        if (results.Count == 0)
             throw new KeyNotFoundException("No exam results found for the abiturient");
 
         return _mapper.Map<IEnumerable<ExamResultDto>>(results);
@@ -91,9 +95,10 @@ public class ExamResultService(
         var maxResults = _examResultRepository.GetAll()
             .GroupBy(er => er.ExamName)
             .Select(g => g.OrderByDescending(er => er.Result).First())
-            .Where(er => er != null);
+            .Where(er => er != null)
+            .ToList();
 
-        if (!maxResults.Any())
+        if (maxResults.Count == 0)
             throw new InvalidOperationException("No exam results found for any exam");
 
         return _mapper.Map<IEnumerable<ExamResultDto>>(maxResults);

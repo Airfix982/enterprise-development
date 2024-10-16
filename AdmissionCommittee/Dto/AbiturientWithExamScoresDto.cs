@@ -9,9 +9,9 @@ public class AbiturientWithExamScoresDto
     /// <summary>
     /// An abiturient
     /// </summary>
-    public required Abiturient abiturient { get; set; }
+    public required Abiturient Abiturient { get; set; }
     /// <summary>
     /// Sum of abiturients result scores
     /// </summary>
-    public required int resultsSum { get; set; }
+    public required int ResultsSum { get; set; }
 }
