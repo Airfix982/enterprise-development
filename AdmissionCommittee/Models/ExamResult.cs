@@ -1,4 +1,6 @@
-﻿namespace AdmissionCommittee.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AdmissionCommittee.Domain.Models;
 
 /// <summary>
 /// Result of an exam
@@ -19,6 +21,7 @@ public class ExamResult : IEntity
     /// Name of an exam
     /// </summary>
     /// <example>Mathematics</example>
+    [MaxLength(50)]
     public required string ExamName { get; set; }
     /// <summary>
     /// Abiturient's result by an exam

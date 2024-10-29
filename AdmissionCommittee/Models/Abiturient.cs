@@ -1,4 +1,6 @@
-﻿namespace AdmissionCommittee.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AdmissionCommittee.Domain.Models;
 /// <summary>
 /// Abiturient who sends documents to enter the university
 /// </summary>
@@ -13,11 +15,13 @@ public class Abiturient : IEntity
     /// Abiturient's name
     /// </summary>
     /// <example>Ivan</example>
+    [MaxLength(50)]
     public required string Name { get; set; }
     /// <summary>
     /// Abiturient's name
     /// </summary>
     /// <example>Ivanov</example>
+    [MaxLength(50)]
     public required string LastName { get; set; }
     /// <summary>
     /// Birthday date of an abiturient
@@ -28,10 +32,12 @@ public class Abiturient : IEntity
     /// Abiturient's country where he is from
     /// </summary>
     /// <example>Mauritania</example>
+    [MaxLength(50)]
     public required string Country { get; set; }
     /// <summary>
     /// Abiturient's city where he is from
     /// </summary>
     /// <example>Jezza</example>
+    [MaxLength(50)]
     public required string City { get; set; }
 }

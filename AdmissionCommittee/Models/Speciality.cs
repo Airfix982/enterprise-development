@@ -1,4 +1,6 @@
-﻿namespace AdmissionCommittee.Domain.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AdmissionCommittee.Domain.Models;
 
 /// <summary>
 /// Represents a speciality offered by a university.
@@ -21,11 +23,13 @@ public class Speciality : IEntity
     /// Name of the speciality.
     /// </summary>
     /// <example>Cyber Security</example>
+    [MaxLength(50)]
     public required string Name { get; set; }
 
     /// <summary>
     /// The faculty or department that offers this speciality.
     /// </summary>
     /// <example>Informatics</example>
+    [MaxLength(50)]
     public required string Facility { get; set; }
 }

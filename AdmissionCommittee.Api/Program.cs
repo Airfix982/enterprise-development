@@ -1,8 +1,10 @@
 using AdmissionCommittee.Api.Middleware;
 using AdmissionCommittee.Domain;
 using AdmissionCommittee.Domain.Attributes;
+using AdmissionCommittee.Domain.Data;
 using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +38,12 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
+
+
+DotNetEnv.Env.Load();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseMySql(Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"),
+                     new MySqlServerVersion(new Version(8, 0, 23))));
 
 var app = builder.Build();
 
