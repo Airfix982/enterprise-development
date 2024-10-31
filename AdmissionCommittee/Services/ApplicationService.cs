@@ -74,7 +74,7 @@ public class ApplicationService(
             throw new InvalidOperationException("Double application to the speciality already picked");
 
         _mapper.Map(applicationDto, application);
-        _applicationRepository.Update(id, _mapper.Map<Application>(application));
+        _applicationRepository.Update(_mapper.Map<Application>(application));
     }
 
     /// <inheritdoc />

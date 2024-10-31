@@ -29,10 +29,10 @@ builder.Services.AddScoped<IAbiturientService, AbiturientService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 builder.Services.AddScoped<ISpecialityService, SpecialityService>();
 builder.Services.AddScoped<IExamResultService, ExamResultService>();
-builder.Services.AddSingleton<IAbiturientRepository, InMemoryAbiturientRepository>();
-builder.Services.AddSingleton<IApplicationRepository, InMemoryApplicationRepository>();
-builder.Services.AddSingleton<ISpecialityRepository, InMemorySpecialityRepository>();
-builder.Services.AddSingleton<IExamResultRepository, InMemoryExamResultRepository>();
+builder.Services.AddScoped<IAbiturientRepository, AbiturientRepository>();
+builder.Services.AddScoped<IApplicationRepository, ApplicationRepository>();
+builder.Services.AddScoped<ISpecialityRepository, SpecialityRepository>();
+builder.Services.AddScoped<IExamResultRepository, ExamResultRepository>();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

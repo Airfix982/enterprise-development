@@ -44,9 +44,11 @@ public class AbiturientService(
     /// <inheritdoc />
     public void Update(int id, AbiturientCreateDto abiturientDto)
     {
-        var abiturient = _mapper.Map<Abiturient>(GetById(id));
+        var abiturient = _abiturientRepository.GetById(id);
+        if (abiturient == null)
+            throw new KeyNotFoundException("Abiturient not found");
         _mapper.Map(abiturientDto, abiturient);
-        _abiturientRepository.Update(id, abiturient);
+        _abiturientRepository.Update(abiturient);
     }
     /// <inheritdoc />
     public void Delete(int id)

@@ -21,11 +21,10 @@ public class InMemoryExamResultRepository : RepositoryInMemory<ExamResult>, IExa
     /// <summary>
     /// Updates an existing exam result with new values.
     /// </summary>
-    /// <param name="id">The exam's.</param>
     /// <param name="examResult">The exam result with updated values.</param>
-    public override void Update(int id, ExamResult examResult)
+    public override void Update(ExamResult examResult)
     {
-        var existingExamResult = GetById(id);
+        var existingExamResult = GetById(examResult.Id);
         if (existingExamResult != null)
         {
             existingExamResult.AbiturientId = examResult.AbiturientId;

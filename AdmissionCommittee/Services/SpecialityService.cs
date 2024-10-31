@@ -51,7 +51,7 @@ public class SpecialityService(
         var speciality = GetById(id);
         _mapper.Map(specialityDto, speciality);
 
-        _specialityRepository.Update(id, _mapper.Map<Speciality>(speciality));
+        _specialityRepository.Update(_mapper.Map<Speciality>(speciality));
     }
 
     /// <inheritdoc />

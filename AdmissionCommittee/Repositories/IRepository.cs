@@ -23,8 +23,7 @@ public interface IRepository<T> where T : class, IEntity
     /// Updates an existing entity in the in-memory context.
     /// </summary>
     /// <param name="entity">The entity with updated values.</param>
-    /// <param name="id">The entity's id'.</param>
-    public void Update(int id, T entity);
+    public void Update(T entity);
     /// <summary>
     /// Adds a new entity to the in-memory context.
     /// </summary>

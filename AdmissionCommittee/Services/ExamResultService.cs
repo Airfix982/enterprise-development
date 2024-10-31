@@ -60,7 +60,7 @@ public class ExamResultService(
     {
         var examResult = GetById(id);
         _mapper.Map(examResultDto, examResult);
-        _examResultRepository.Update(id, _mapper.Map<ExamResult>(examResult));
+        _examResultRepository.Update(_mapper.Map<ExamResult>(examResult));
     }
 
     /// <inheritdoc />

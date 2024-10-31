@@ -18,9 +18,9 @@ public class InMemoryApplicationRepository : RepositoryInMemory<Application>, IA
     /// <param name="applicationList">List of applications to initialize the repository with.</param>
     public InMemoryApplicationRepository(List<Application> applicationList) : base(applicationList) { }
     /// <inheritdoc />
-    public override void Update(int id, Application application)
+    public override void Update(Application application)
     {
-        var existingApplication = GetById(id);
+        var existingApplication = GetById(application.Id);
         if (existingApplication != null)
         {
             existingApplication.SpecialityId = application.SpecialityId;

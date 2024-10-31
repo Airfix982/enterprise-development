@@ -23,10 +23,9 @@ public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbi
     /// Updates an existing abiturient's details in the repository.
     /// </summary>
     /// <param name="abiturient">Abiturient object with updated information.</param>
-    /// <param name="id">Abiturient's id'.</param>
-    public override void Update(int id, Abiturient abiturient)
+    public override void Update(Abiturient abiturient)
     {
-        var existingAbiturient = GetById(id);
+        var existingAbiturient = GetById(abiturient.Id);
         if (existingAbiturient != null)
         {
             existingAbiturient.Name = abiturient.Name;

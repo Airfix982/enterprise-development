@@ -42,7 +42,7 @@ public class RepositoryInMemory<T> : IRepository<T> where T : class, IEntity
         return entity.Id;
     }
     /// <inheritdoc />
-    public virtual void Update(int id, T entity)
+    public virtual void Update(T entity)
     {
     }
     /// <inheritdoc />

@@ -21,11 +21,10 @@ public class InMemorySpecialityRepository : RepositoryInMemory<Speciality>, ISpe
     /// <summary>
     /// Updates an existing speciality with new data.
     /// </summary>
-    /// <param name="id">The updated speciality's.</param>
     /// <param name="speciality">The updated speciality entity.</param>
-    public override void Update(int id, Speciality speciality)
+    public override void Update(Speciality speciality)
     {
-        var existingSpeciality = GetById(id);
+        var existingSpeciality = GetById(speciality.Id);
         if (existingSpeciality != null)
         {
             existingSpeciality.Number = speciality.Number;
