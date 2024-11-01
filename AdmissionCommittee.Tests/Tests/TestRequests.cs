@@ -14,53 +14,48 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     /// Tests the selection of abiturients by city.
     /// </summary>
     [Fact]
-    public void TestSelectAbiturientsByCity()
+    public async Task TestSelectAbiturientsByCity()
     {
-        var query = _fixture.AbiturientService.GetAbiturientsByCity("Samara").Select(a => a.Id).ToList();
+        var query = (await _fixture.AbiturientService.GetAbiturientsByCityAsync("Samara")).Select(a => a.Id).ToList();
 
         Assert.Equivalent(2, query.Count);
-        Assert.Equal([1, 4], query);
+        Assert.Equal([2, 5], query);
     }
 
     /// <summary>
     /// Tests the selection of abiturients who are older than 20 years.
     /// </summary>
     [Fact]
-    public void TestSelectOlderAbiturients()
+    public async Task TestSelectOlderAbiturients()
     {
-        var query = _fixture.AbiturientService.GetAbiturientsOlderThan(20).Select(a => a.Id).ToList();
+        var query = (await _fixture.AbiturientService.GetAbiturientsOlderThanAsync(20)).Select(a => a.Id).ToList();
 
         Assert.Equivalent(4, query.Count);
-        Assert.Equal([1, 3, 5, 8], query);
+        Assert.Equal([2, 4, 6, 9], query);
     }
 
     /// <summary>
     /// Tests the selection of abiturients by a specific speciality.
     /// </summary>
     [Fact]
-    public void TestSelectBySpeciality()
+    public async Task TestSelectBySpeciality()
     {
-        var query = _fixture.AbiturientService.GetAbiturientBySpecialityOrderedByRates(1)
+        var query = (await _fixture.AbiturientService.GetAbiturientBySpecialityOrderedByRatesAsync(1))
             .Select(a => a.Id).ToList();
 
-        Assert.Equivalent(2, query.Count);
-        Assert.Equal([5, 0], query);
+        Assert.Equivalent(1, query.Count);
+        Assert.Equal([5], query);
     }
 
     /// <summary>
     /// Tests the number of abiturients who applied to specific specialities with first priority.
     /// </summary>
     [Fact]
-    public void TestFirstPrioritySpecialitiesByAbiturientsAmount()
+    public async Task TestFirstPrioritySpecialitiesByAbiturientsAmount()
     {
-        var query = _fixture.AbiturientService.GetAbiturientsCountByFirstPrioritySpecialities().ToList();
-
+        var query = (await _fixture.AbiturientService.GetAbiturientsCountByFirstPrioritySpecialitiesAsync()).ToList();
+        
         Assert.Collection(query,
-            item =>
-            {
-                Assert.Equal(0, item.SpecialityId);
-                Assert.Equal(2, item.AbiturientsCount);
-            },
             item =>
             {
                 Assert.Equal(1, item.SpecialityId);
@@ -105,6 +100,11 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
             {
                 Assert.Equal(9, item.SpecialityId);
                 Assert.Equal(1, item.AbiturientsCount);
+            },
+            item =>
+            {
+                Assert.Equal(10, item.SpecialityId);
+                Assert.Equal(0, item.AbiturientsCount);
             }
             );
     }
@@ -113,9 +113,9 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     /// Tests the selection of top 5 abiturients based on their exam scores.
     /// </summary>
     [Fact]
-    public void TestTopRatedAbiturients()
+    public async Task TestTopRatedAbiturients()
     {
-        var query = _fixture.AbiturientService.GetTopRatedAbiturients(5).Select(a => a.Abiturient.Id).ToList();
+        var query = (await _fixture.AbiturientService.GetTopRatedAbiturientsAsync(5)).Select(a => a.Abiturient.Id).ToList();
 
         Assert.Equivalent(5, query.Count);
         Assert.Equal([3, 9, 7, 5, 1], query);
@@ -125,9 +125,9 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     /// Tests the favourite specialities chosen by the top-rated abiturients based on maximum exam scores.
     /// </summary>
     [Fact]
-    public void TestFavoriteSpecialitiesByTopRatedAbiturients()
+    public async Task TestFavoriteSpecialitiesByTopRatedAbiturients()
     {
-        var query = _fixture.AbiturientService.GetMaxRatedAbiturientsWithFavoriteSpeciality().ToList();
+        var query = (await _fixture.AbiturientService.GetMaxRatedAbiturientsWithFavoriteSpecialityAsync()).ToList();
 
         Assert.Equivalent(5, query.Count);
         Assert.Equal([3, 4, 5, 7, 9],
