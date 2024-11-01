@@ -1,7 +1,6 @@
 ﻿using AdmissionCommittee.Domain;
 using AdmissionCommittee.Domain.Data;
 using AdmissionCommittee.Domain.Models;
-using AdmissionCommittee.Domain.Repositories;
 using AdmissionCommittee.Domain.Services;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;

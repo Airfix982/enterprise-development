@@ -1,5 +1,4 @@
 ﻿using AdmissionCommittee.Domain.Models;
-using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Repositories;
 

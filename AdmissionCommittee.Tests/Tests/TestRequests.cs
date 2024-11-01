@@ -54,7 +54,7 @@ public class TestRequests(AdmissionComitteeFixture fixture) : IClassFixture<Admi
     public async Task TestFirstPrioritySpecialitiesByAbiturientsAmount()
     {
         var query = (await _fixture.AbiturientService.GetAbiturientsCountByFirstPrioritySpecialitiesAsync()).ToList();
-        
+
         Assert.Collection(query,
             item =>
             {

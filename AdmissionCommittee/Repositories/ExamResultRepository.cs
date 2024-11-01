@@ -2,8 +2,6 @@
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Repository for managing ExamResult entities in the database.

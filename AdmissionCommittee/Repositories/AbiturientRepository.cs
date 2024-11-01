@@ -2,7 +2,6 @@
 using AdmissionCommittee.Domain.Models;
 using AdmissionCommittee.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 /// <summary>
 /// Repository for managing Abiturient entities in the database.
