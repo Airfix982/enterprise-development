@@ -22,77 +22,72 @@ public class AbiturientService(
     private readonly ISpecialityRepository _specialityRepository = specialityRepository;
     private readonly IMapper _mapper = mapper;
     /// <inheritdoc />
-    public IEnumerable<AbiturientDto> GetAll()
+    public async Task<IEnumerable<AbiturientDto>> GetAllAsync()
     {
-        var abiturients = _abiturientRepository.GetAll();
+        var abiturients = await _abiturientRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
     /// <inheritdoc />
-    public AbiturientDto GetById(int id)
+    public async Task<AbiturientDto> GetByIdAsync(int id)
     {
-        var abiturient = _abiturientRepository.GetById(id);
+        var abiturient = await _abiturientRepository.GetByIdAsync(id);
         if (abiturient == null)
             throw new KeyNotFoundException("Abiturient not found");
         return _mapper.Map<AbiturientDto>(abiturient);
     }
     /// <inheritdoc />
-    public int Add(AbiturientCreateDto abiturientDto)
+    public async Task<int> AddAsync(AbiturientCreateDto abiturientDto)
     {
         var abiturient = _mapper.Map<Abiturient>(abiturientDto);
-        return _abiturientRepository.Add(abiturient);
+        return await _abiturientRepository.AddAsync(abiturient);
     }
     /// <inheritdoc />
-    public void Update(int id, AbiturientCreateDto abiturientDto)
+    public async Task UpdateAsync(int id, AbiturientCreateDto abiturientDto)
     {
-        var abiturient = _abiturientRepository.GetById(id);
+        var abiturient = await _abiturientRepository.GetByIdAsync(id);
         if (abiturient == null)
             throw new KeyNotFoundException("Abiturient not found");
         _mapper.Map(abiturientDto, abiturient);
-        _abiturientRepository.Update(abiturient);
+        await _abiturientRepository.UpdateAsync(abiturient);
     }
     /// <inheritdoc />
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var abiturient = _abiturientRepository.GetById(id);
+        var abiturient = await _abiturientRepository.GetByIdAsync(id);
         if (abiturient == null)
             throw new KeyNotFoundException("Abiturient not found");
-        _abiturientRepository.Delete(id);
+        await _abiturientRepository.DeleteAsync(id);
     }
     /// <inheritdoc />
-    public IEnumerable<AbiturientDto> GetAbiturientsByCity(string city)
+    public async Task<IEnumerable<AbiturientDto>> GetAbiturientsByCityAsync(string city)
     {
-        var abiturients = _abiturientRepository
-                          .GetAll()
-                          .Where(e => e.City == city)
-                          .ToList();
+        var abiturients = (await _abiturientRepository.GetAllAsync()).Where(e => e.City == city).ToList();
         if (abiturients.Count == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
     /// <inheritdoc />
-    public IEnumerable<AbiturientDto> GetAbiturientsOlderThan(int age)
+    public async Task<IEnumerable<AbiturientDto>> GetAbiturientsOlderThanAsync(int age)
     {
-        var abiturients = _abiturientRepository
-                          .GetAll()
-                          .Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age)
-                          .ToList();
+        var abiturients = (await _abiturientRepository.GetAllAsync()).Where(e => DateTime.Now.Year - e.BirthdayDate.Year > age)
+                            .ToList();
         if (abiturients.Count == 0)
             throw new KeyNotFoundException("Abiturients not found");
         return _mapper.Map<IEnumerable<AbiturientDto>>(abiturients);
     }
     /// <inheritdoc />
-    public IEnumerable<AbiturientDto> GetAbiturientBySpecialityOrderedByRates(int specialityId)
+    public async Task<IEnumerable<AbiturientDto>> GetAbiturientBySpecialityOrderedByRatesAsync(int specialityId)
     {
-        if (_specialityRepository.GetById(specialityId) == null)
+        if (await _specialityRepository.GetByIdAsync(specialityId) == null)
             throw new InvalidOperationException($"No speciality with id: {specialityId}");
 
-        var abiturients = _applicationRepository.GetAll()
+        var abiturients = (await _applicationRepository.GetAllAsync())
             .Where(ap => ap.SpecialityId == specialityId)
-            .Join(_abiturientRepository.GetAll(),
+            .Join(await _abiturientRepository.GetAllAsync(),
                   ap => ap.AbiturientId,
                   ab => ab.Id,
                   (ap, ab) => ab)
-            .GroupJoin(_examResultRepository.GetAll(),
+            .GroupJoin(await _examResultRepository.GetAllAsync(),
                        ab => ab.Id,
                        er => er.AbiturientId,
                        (abiturient, examResults) => new
@@ -111,15 +106,13 @@ public class AbiturientService(
     }
 
     /// <inheritdoc />
-    public IEnumerable<SpecialitiesCountAsFavoriteDto> GetAbiturientsCountByFirstPrioritySpecialities()
+    public async Task<IEnumerable<SpecialitiesCountAsFavoriteDto>> GetAbiturientsCountByFirstPrioritySpecialitiesAsync()
     {
         var firstPriority = 1;
 
-        var applicationsWithFirstPriority = _applicationRepository.GetAll()
-                                            .Where(ap => ap.Priority == firstPriority);
+        var applicationsWithFirstPriority = (await _applicationRepository.GetAllAsync()).Where(ap => ap.Priority == firstPriority);
 
-        var result = _specialityRepository.GetAll()
-                    .GroupJoin(applicationsWithFirstPriority,
+        var result = (await _specialityRepository.GetAllAsync()).GroupJoin(applicationsWithFirstPriority,
                                speciality => speciality.Id,
                                application => application.SpecialityId,
                                (speciality, applications) => new SpecialitiesCountAsFavoriteDto
@@ -137,10 +130,9 @@ public class AbiturientService(
     }
 
     /// <inheritdoc />
-    public IEnumerable<AbiturientWithExamScoresDto> GetTopRatedAbiturients(int maxCount)
+    public async Task<IEnumerable<AbiturientWithExamScoresDto>> GetTopRatedAbiturientsAsync(int maxCount)
     {
-        var abiturients = _abiturientRepository.GetAll()
-            .GroupJoin(_examResultRepository.GetAll(),
+        var abiturients = (await _abiturientRepository.GetAllAsync()).GroupJoin(await _examResultRepository.GetAllAsync(),
                        ab => ab.Id,
                        er => er.AbiturientId,
                        (abiturient, examResults) => new
@@ -163,9 +155,9 @@ public class AbiturientService(
     }
 
     /// <inheritdoc />
-    public IEnumerable<AbiturientMaxRateDto> GetMaxRatedAbiturientsWithFavoriteSpeciality()
+    public async Task<IEnumerable<AbiturientMaxRateDto>> GetMaxRatedAbiturientsWithFavoriteSpecialityAsync()
     {
-        var allExamResults = _examResultRepository.GetAll().ToList();
+        var allExamResults = (await _examResultRepository.GetAllAsync()).ToList();
         var maxResultsAbiturientsIds = allExamResults
             .GroupBy(er => er.ExamName)
             .Select(g => g.OrderByDescending(er => er.Result).First())
@@ -179,12 +171,11 @@ public class AbiturientService(
         }
 
         var firstPriority = 1;
-        var allApplications = _applicationRepository.GetAll()
+        var allApplications = (await _applicationRepository.GetAllAsync())
             .Where(ap => ap.Priority == firstPriority)
             .ToList();
 
-        return _abiturientRepository
-              .GetAll()
+        return (await _abiturientRepository.GetAllAsync())
               .Where(ab => maxResultsAbiturientsIds.Contains(ab.Id))
               .Select(ab =>
               {

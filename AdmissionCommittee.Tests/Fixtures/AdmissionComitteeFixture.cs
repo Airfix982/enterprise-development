@@ -120,4 +120,3 @@ public class AdmissionComitteeFixture
         AbiturientService = new AbiturientService(AbiturientRepository, ApplicationRepository, ExamResultRepository, SpecialityRepository, Mapper);
     }
 }
-    

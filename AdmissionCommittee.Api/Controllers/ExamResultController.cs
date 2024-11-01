@@ -21,10 +21,10 @@ public class ExamResultController
     /// <returns>A list of exam results.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<ExamResultDto>> Get()
+    public async Task<ActionResult<IEnumerable<ExamResultDto>>> Get()
     {
         _logger.LogInformation("Retrieving all exam results.");
-        var examResults = _examResultService.GetAll();
+        var examResults = await _examResultService.GetAllAsync();
         return Ok(examResults);
     }
 
@@ -35,10 +35,10 @@ public class ExamResultController
     /// <returns>The requested exam result.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<ExamResultDto> Get(int id)
+    public async Task<ActionResult<ExamResultDto>> Get(int id)
     {
         _logger.LogInformation("Retrieving exam result with ID: {id}", id);
-        var examResult = _examResultService.GetById(id);
+        var examResult = await _examResultService.GetByIdAsync(id);
         return Ok(examResult);
     }
 
@@ -50,7 +50,7 @@ public class ExamResultController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody] ExamResultCreateDto examResult)
+    public async Task<IActionResult> Add([FromBody] ExamResultCreateDto examResult)
     {
         if (!ModelState.IsValid)
         {
@@ -58,7 +58,7 @@ public class ExamResultController
             return BadRequest(ModelState);
         }
         _logger.LogInformation("Adding new exam result for Abiturient ID: {examResult.AbiturientId}", examResult.AbiturientId);
-        var id = _examResultService.Add(examResult);
+        var id = await _examResultService.AddAsync(examResult);
         return CreatedAtAction(nameof(Get), new { id }, examResult);
     }
 
@@ -70,10 +70,10 @@ public class ExamResultController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody] ExamResultCreateDto examResult)
+    public async Task<IActionResult> Update(int id, [FromBody] ExamResultCreateDto examResult)
     {
         _logger.LogInformation("Updating exam result with ID: {id}", id);
-        _examResultService.Update(id, examResult);
+        await _examResultService.UpdateAsync(id, examResult);
         return NoContent();
     }
 
@@ -84,10 +84,10 @@ public class ExamResultController
     /// <returns>No content if the deletion is successful.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         _logger.LogInformation("Deleting exam result with ID: {id}", id);
-        _examResultService.Delete(id);
+        await _examResultService.DeleteAsync(id);
         return NoContent();
     }
 }

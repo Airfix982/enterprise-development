@@ -21,10 +21,10 @@ public class ApplicationController
     /// <returns>A list of applications.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<ApplicationDto>> Get()
+    public async Task<ActionResult<IEnumerable<ApplicationDto>>> Get()
     {
         _logger.LogInformation("Retrieving all applications.");
-        var applications = _applicationService.GetAll();
+        var applications = await _applicationService.GetAllAsync();
         return Ok(applications);
     }
 
@@ -35,10 +35,10 @@ public class ApplicationController
     /// <returns>The requested application.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<ApplicationDto> Get(int id)
+    public async Task<ActionResult<ApplicationDto>> Get(int id)
     {
         _logger.LogInformation("Retrieving application with ID: {id}", id);
-        var application = _applicationService.GetById(id);
+        var application = await _applicationService.GetByIdAsync(id);
         return Ok(application);
     }
 
@@ -50,7 +50,7 @@ public class ApplicationController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody] ApplicationCreateDto application)
+    public async Task<IActionResult> Add([FromBody] ApplicationCreateDto application)
     {
         if (!ModelState.IsValid)
         {
@@ -58,7 +58,7 @@ public class ApplicationController
             return BadRequest(ModelState);
         }
         _logger.LogInformation("Adding new application for Abiturient ID: {application.AbiturientId}", application.AbiturientId);
-        var id = _applicationService.Add(application);
+        var id = await _applicationService.AddAsync(application);
         return CreatedAtAction(nameof(Get), new { id }, application);
 
     }
@@ -71,10 +71,10 @@ public class ApplicationController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody] ApplicationCreateDto application)
+    public async Task<IActionResult> Update(int id, [FromBody] ApplicationCreateDto application)
     {
         _logger.LogInformation("Updating application with ID: {id}", id);
-        _applicationService.Update(id, application);
+        await _applicationService.UpdateAsync(id, application);
         return NoContent();
     }
 
@@ -85,10 +85,10 @@ public class ApplicationController
     /// <returns>No content if the deletion is successful.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         _logger.LogInformation("Deleting application with ID: {id}", id);
-        _applicationService.Delete(id);
+        await _applicationService.DeleteAsync(id);
         return NoContent();
     }
 }

@@ -1,36 +1,52 @@
 ﻿using AdmissionCommittee.Domain.Data;
 using AdmissionCommittee.Domain.Models;
-using System;
+using AdmissionCommittee.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AdmissionCommittee.Domain.Repositories;
-
+/// <summary>
+/// Repository for managing ExamResult entities in the database.
+/// </summary>
 public class ExamResultRepository(ApplicationDbContext context) : IExamResultRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public IEnumerable<ExamResult> GetAll() => _context.ExamResults.ToList();
-    public ExamResult? GetById(int id) => _context.ExamResults.Find(id);
-    public int Add(ExamResult entity)
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<ExamResult>> GetAllAsync()
     {
-        _context.ExamResults.Add(entity);
-        _context.SaveChanges();
+        return await _context.ExamResults.ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<ExamResult?> GetByIdAsync(int id)
+    {
+        return await _context.ExamResults.FindAsync(id);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> AddAsync(ExamResult entity)
+    {
+        await _context.ExamResults.AddAsync(entity);
+        await _context.SaveChangesAsync();
         return entity.Id;
     }
-    public void Update(ExamResult entity)
+
+    /// <inheritdoc />
+    public async Task UpdateAsync(ExamResult entity)
     {
         _context.ExamResults.Update(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
-    public void Delete(int id)
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(int id)
     {
-        var abiturient = _context.ExamResults.Find(id);
-        if (abiturient != null)
+        var examResult = await _context.ExamResults.FindAsync(id);
+        if (examResult != null)
         {
-            _context.ExamResults.Remove(abiturient);
-            _context.SaveChanges();
+            _context.ExamResults.Remove(examResult);
+            await _context.SaveChangesAsync();
         }
     }
 }

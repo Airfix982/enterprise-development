@@ -18,28 +18,28 @@ public interface IBaseService<T, TDto, TCreateDto>
     /// Retrieves all entities of type <typeparamref name="TDto"/>.
     /// </summary>
     /// <returns>An enumerable collection of all entities.</returns>
-    IEnumerable<TDto> GetAll();
+    Task<IEnumerable<TDto>> GetAllAsync();
     /// <summary>
     /// Retrieves a specific entity of type <typeparamref name="TDto"/> by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
     /// <returns>The entity if found; otherwise, null.</returns>
-    TDto? GetById(int id);
+    Task<TDto> GetByIdAsync(int id);
     /// <summary>
     /// Adds a new entity based on the provided data transfer object (DTO) of type <typeparamref name="TDto"/>.
     /// </summary>
     /// <param name="dto">The data transfer object (DTO) containing the data for the new entity.</param>
     /// <returns>Id of the added entity</returns>
-    int Add(TCreateDto dto);
+    Task<int> AddAsync(TCreateDto dto);
     /// <summary>
     /// Updates an existing entity using the provided data transfer object (DTO) of type <typeparamref name="TDto"/>.
     /// </summary>
     /// <param name="dto">The data transfer object (DTO) containing updated data for the entity.</param>
     /// <param name="id">The unique identifier of the entity.</param>
-    void Update(int id, TCreateDto dto);
+    Task UpdateAsync(int id, TCreateDto dto);
     /// <summary>
     /// Deletes an entity of type <typeparamref name="T"/> by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to be deleted.</param>
-    void Delete(int id);
+    Task DeleteAsync(int id);
 }

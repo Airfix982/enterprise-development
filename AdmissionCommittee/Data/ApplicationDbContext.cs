@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AdmissionCommittee.Domain.Data;
 public class ApplicationDbContext : DbContext

@@ -1,36 +1,51 @@
 ﻿using AdmissionCommittee.Domain.Data;
 using AdmissionCommittee.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using AdmissionCommittee.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
-namespace AdmissionCommittee.Domain.Repositories;
-
+/// <summary>
+/// Repository for managing Abiturient entities in the database.
+/// </summary>
 public class AbiturientRepository(ApplicationDbContext context) : IAbiturientRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public IEnumerable<Abiturient> GetAll() => _context.Abiturients.ToList();
-    public Abiturient? GetById(int id) => _context.Abiturients.Find(id);
-    public int Add(Abiturient entity)
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Abiturient>> GetAllAsync()
     {
-        _context.Abiturients.Add(entity);
-        _context.SaveChanges();
+        return await _context.Abiturients.ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<Abiturient?> GetByIdAsync(int id)
+    {
+        return await _context.Abiturients.FindAsync(id);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> AddAsync(Abiturient entity)
+    {
+        await _context.Abiturients.AddAsync(entity);
+        await _context.SaveChangesAsync();
         return entity.Id;
     }
-    public void Update(Abiturient entity)
+
+    /// <inheritdoc />
+    public async Task UpdateAsync(Abiturient entity)
     {
         _context.Abiturients.Update(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
-    public void Delete(int id)
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(int id)
     {
-        var abiturient = _context.Abiturients.Find(id);
-        if(abiturient != null)
+        var abiturient = await _context.Abiturients.FindAsync(id);
+        if (abiturient != null)
         {
             _context.Abiturients.Remove(abiturient);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

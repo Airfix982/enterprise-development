@@ -21,10 +21,10 @@ public class SpecialityController
     /// <returns>A list of specialities.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<SpecialityDto>> Get()
+    public async Task<ActionResult<IEnumerable<SpecialityDto>>> Get()
     {
         _logger.LogInformation("Retrieving all specialities.");
-        var specialities = _specialityService.GetAll();
+        var specialities = await _specialityService.GetAllAsync();
         return Ok(specialities);
     }
 
@@ -35,10 +35,10 @@ public class SpecialityController
     /// <returns>The requested speciality.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<SpecialityDto> Get(int id)
+    public async Task<ActionResult<SpecialityDto>> Get(int id)
     {
         _logger.LogInformation("Retrieving speciality with ID: {id}", id);
-        var speciality = _specialityService.GetById(id);
+        var speciality = await _specialityService.GetByIdAsync(id);
         return Ok(speciality);
     }
 
@@ -50,7 +50,7 @@ public class SpecialityController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody] SpecialityCreateDto speciality)
+    public async Task<IActionResult> Add([FromBody] SpecialityCreateDto speciality)
     {
         if (!ModelState.IsValid)
         {
@@ -58,7 +58,7 @@ public class SpecialityController
             return BadRequest(ModelState);
         }
         _logger.LogInformation("Adding new speciality: {speciality.Name}", speciality.Name);
-        var id = _specialityService.Add(speciality);
+        var id = await _specialityService.AddAsync(speciality);
         return CreatedAtAction(nameof(Get), new { id }, speciality);
     }
 
@@ -70,10 +70,10 @@ public class SpecialityController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody] SpecialityCreateDto speciality)
+    public async Task<IActionResult> Update(int id, [FromBody] SpecialityCreateDto speciality)
     {
         _logger.LogInformation("Updating speciality with ID: {id}", id);
-        _specialityService.Update(id, speciality);
+        await _specialityService.UpdateAsync(id, speciality);
         return NoContent();
     }
 
@@ -84,10 +84,10 @@ public class SpecialityController
     /// <returns>No content if the deletion is successful.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         _logger.LogInformation("Deleting speciality with ID: {id}", id);
-        _specialityService.Delete(id);
+        await _specialityService.DeleteAsync(id);
         return NoContent();
     }
 }

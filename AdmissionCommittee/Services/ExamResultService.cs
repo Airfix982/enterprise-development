@@ -22,16 +22,16 @@ public class ExamResultService(
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc />
-    public IEnumerable<ExamResultDto> GetAll()
+    public async Task<IEnumerable<ExamResultDto>> GetAllAsync()
     {
-        var results = _examResultRepository.GetAll();
+        var results = await _examResultRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<ExamResultDto>>(results);
     }
 
     /// <inheritdoc />
-    public ExamResultDto GetById(int id)
+    public async Task<ExamResultDto> GetByIdAsync(int id)
     {
-        var result = _examResultRepository.GetById(id);
+        var result = await _examResultRepository.GetByIdAsync(id);
         if (result == null)
             throw new KeyNotFoundException("Exam result not found");
 
@@ -39,48 +39,48 @@ public class ExamResultService(
     }
 
     /// <inheritdoc />
-    public int Add(ExamResultCreateDto examResultDto)
+    public async Task<int> AddAsync(ExamResultCreateDto examResultDto)
     {
-        if (_abiturientRepository.GetById(examResultDto.AbiturientId) == null)
+        if (await _abiturientRepository.GetByIdAsync(examResultDto.AbiturientId) == null)
             throw new InvalidOperationException("Adding result to a non-existing abiturient");
 
-        var isExamAlreadyAdded = _examResultRepository
-                                 .GetAll()
-                                 .Any(er => er.AbiturientId == examResultDto.AbiturientId 
+        var isExamAlreadyAdded = (await _examResultRepository
+                                 .GetAllAsync())
+                                 .Any(er => er.AbiturientId == examResultDto.AbiturientId
                                              && er.ExamName == examResultDto.ExamName);
         if (isExamAlreadyAdded)
             throw new InvalidOperationException("Adding result to an already added exam");
 
         var examResult = _mapper.Map<ExamResult>(examResultDto);
-        return _examResultRepository.Add(examResult);
+        return await _examResultRepository.AddAsync(examResult);
     }
 
     /// <inheritdoc />
-    public void Update(int id, ExamResultCreateDto examResultDto)
+    public async Task UpdateAsync(int id, ExamResultCreateDto examResultDto)
     {
-        var examResult = GetById(id);
+        var examResult = await GetByIdAsync(id);
         _mapper.Map(examResultDto, examResult);
-        _examResultRepository.Update(_mapper.Map<ExamResult>(examResult));
+        await _examResultRepository.UpdateAsync(_mapper.Map<ExamResult>(examResult));
     }
 
     /// <inheritdoc />
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var result = _examResultRepository.GetById(id);
+        var result = await _examResultRepository.GetByIdAsync(id);
         if (result == null)
             throw new KeyNotFoundException("Cannot delete a non-existing exam result");
 
-        _examResultRepository.Delete(id);
+        await _examResultRepository.DeleteAsync(id);
     }
 
     /// <inheritdoc />
-    public IEnumerable<ExamResultDto> GetResultsByAbiturientId(int abiturientId)
+    public async Task<IEnumerable<ExamResultDto>> GetResultsByAbiturientIdAsync(int abiturientId)
     {
-        if (_abiturientRepository.GetById(abiturientId) == null)
+        if (await _abiturientRepository.GetByIdAsync(abiturientId) == null)
             throw new InvalidOperationException("Cannot retrieve results for a non-existing abiturient");
 
-        var results = _examResultRepository
-                      .GetAll()
+        var results = (await _examResultRepository
+                      .GetAllAsync())
                       .Where(er => er.AbiturientId == abiturientId)
                       .ToList();
         if (results.Count == 0)
@@ -90,9 +90,9 @@ public class ExamResultService(
     }
 
     /// <inheritdoc />
-    public IEnumerable<ExamResultDto> GetMaxResultsPerExam()
+    public async Task<IEnumerable<ExamResultDto>> GetMaxResultsPerExamAsync()
     {
-        var maxResults = _examResultRepository.GetAll()
+        var maxResults = (await _examResultRepository.GetAllAsync())
             .GroupBy(er => er.ExamName)
             .Select(g => g.OrderByDescending(er => er.Result).First())
             .Where(er => er != null)

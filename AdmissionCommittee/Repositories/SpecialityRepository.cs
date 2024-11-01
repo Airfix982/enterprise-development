@@ -1,36 +1,52 @@
 ﻿using AdmissionCommittee.Domain.Data;
 using AdmissionCommittee.Domain.Models;
-using System;
+using AdmissionCommittee.Domain.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace AdmissionCommittee.Domain.Repositories;
-
+/// <summary>
+/// Repository for managing Speciality entities in the database.
+/// </summary>
 public class SpecialityRepository(ApplicationDbContext context) : ISpecialityRepository
 {
     private readonly ApplicationDbContext _context = context;
-    public IEnumerable<Speciality> GetAll() => _context.Specialities.ToList();
-    public Speciality? GetById(int id) => _context.Specialities.Find(id);
-    public int Add(Speciality entity)
+
+    /// <inheritdoc />
+    public async Task<IEnumerable<Speciality>> GetAllAsync()
     {
-        _context.Specialities.Add(entity);
-        _context.SaveChanges();
+        return await _context.Specialities.ToListAsync();
+    }
+
+    /// <inheritdoc />
+    public async Task<Speciality?> GetByIdAsync(int id)
+    {
+        return await _context.Specialities.FindAsync(id);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> AddAsync(Speciality entity)
+    {
+        await _context.Specialities.AddAsync(entity);
+        await _context.SaveChangesAsync();
         return entity.Id;
     }
-    public void Update(Speciality entity)
+
+    /// <inheritdoc />
+    public async Task UpdateAsync(Speciality entity)
     {
         _context.Specialities.Update(entity);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
     }
-    public void Delete(int id)
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(int id)
     {
-        var abiturient = _context.Specialities.Find(id);
-        if (abiturient != null)
+        var speciality = await _context.Specialities.FindAsync(id);
+        if (speciality != null)
         {
-            _context.Specialities.Remove(abiturient);
-            _context.SaveChanges();
+            _context.Specialities.Remove(speciality);
+            await _context.SaveChangesAsync();
         }
     }
 }

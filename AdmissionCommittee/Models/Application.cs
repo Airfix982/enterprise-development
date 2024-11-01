@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace AdmissionCommittee.Domain.Models;
+﻿namespace AdmissionCommittee.Domain.Models;
 
 /// <summary>
 /// Represents an application submitted by an abiturient for a specific speciality.

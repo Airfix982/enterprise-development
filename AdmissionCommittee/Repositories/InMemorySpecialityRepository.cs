@@ -1,4 +1,4 @@
-﻿using AdmissionCommittee.Domain.Models;
+﻿/*using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -33,3 +33,4 @@ public class InMemorySpecialityRepository : RepositoryInMemory<Speciality>, ISpe
         }
     }
 }
+*/

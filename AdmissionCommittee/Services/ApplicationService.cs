@@ -24,107 +24,103 @@ public class ApplicationService(
     private readonly IMapper _mapper = mapper;
 
     /// <inheritdoc />
-    public IEnumerable<ApplicationDto> GetAll()
+    public async Task<IEnumerable<ApplicationDto>> GetAllAsync()
     {
-        var applications = _applicationRepository.GetAll();
+        var applications = await _applicationRepository.GetAllAsync();
         return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
     }
 
     /// <inheritdoc />
-    public ApplicationDto GetById(int id)
+    public async Task<ApplicationDto> GetByIdAsync(int id)
     {
-        var application = _applicationRepository.GetById(id);
+        var application = await _applicationRepository.GetByIdAsync(id);
         if (application == null)
             throw new KeyNotFoundException("Application not found");
         return _mapper.Map<ApplicationDto>(application);
     }
 
     /// <inheritdoc />
-    public int Add(ApplicationCreateDto applicationDto)
+    public async Task<int> AddAsync(ApplicationCreateDto applicationDto)
     {
-        if (_abiturientRepository.GetById(applicationDto.AbiturientId) == null)
+        if (await _abiturientRepository.GetByIdAsync(applicationDto.AbiturientId) == null)
             throw new InvalidOperationException("Application to non-existing abiturient");
 
-        var abiturientApplicationsCount = GetApplicationsByAbiturientId(applicationDto.AbiturientId).ToList();
+        var abiturientApplicationsCount = (await GetApplicationsByAbiturientIdAsync(applicationDto.AbiturientId)).ToList();
         var maxApplicationsCount = 3;
 
         if (abiturientApplicationsCount.Count >= maxApplicationsCount)
             throw new InvalidOperationException("Abiturient cannot have more than 3 applications");
 
-        if (_specialityRepository.GetAll().All(s => s.Id != applicationDto.SpecialityId))
+        if ((await _specialityRepository.GetAllAsync()).All(s => s.Id != applicationDto.SpecialityId))
             throw new InvalidOperationException("Application to non-existing speciality");
 
         if (abiturientApplicationsCount.Any(ap => ap.SpecialityId == applicationDto.SpecialityId))
             throw new InvalidOperationException("Double application to the speciality already picked");
 
         var application = _mapper.Map<Application>(applicationDto);
-        return _applicationRepository.Add(application);
+        return await _applicationRepository.AddAsync(application);
     }
 
     /// <inheritdoc />
-    public void Update(int id, ApplicationCreateDto applicationDto)
+    public async Task UpdateAsync(int id, ApplicationCreateDto applicationDto)
     {
-        var application = GetById(id);
+        var application = await GetByIdAsync(id);
 
-        if (_specialityRepository.GetAll().All(s => s.Id != applicationDto.SpecialityId))
+        if ((await _specialityRepository.GetAllAsync()).All(s => s.Id != applicationDto.SpecialityId))
             throw new InvalidOperationException("Application to non-existing speciality");
 
-        if (GetApplicationsByAbiturientId(applicationDto.AbiturientId)
+        if ((await GetApplicationsByAbiturientIdAsync(applicationDto.AbiturientId))
             .Any(ap => ap.SpecialityId == applicationDto.SpecialityId))
             throw new InvalidOperationException("Double application to the speciality already picked");
 
         _mapper.Map(applicationDto, application);
-        _applicationRepository.Update(_mapper.Map<Application>(application));
+        await _applicationRepository.UpdateAsync(_mapper.Map<Application>(application));
     }
 
     /// <inheritdoc />
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        var application = _applicationRepository.GetById(id);
+        var application = await _applicationRepository.GetByIdAsync(id);
         if (application == null)
             throw new KeyNotFoundException("Cannot delete a non-existing application");
 
-        _applicationRepository.Delete(id);
+        await _applicationRepository.DeleteAsync(id);
     }
 
     /// <inheritdoc />
-    public IEnumerable<ApplicationDto> GetApplicationsBySpecialityId(int specialityId)
+    public async Task<IEnumerable<ApplicationDto>> GetApplicationsBySpecialityIdAsync(int specialityId)
     {
-        var applications = _applicationRepository
-                           .GetAll()
-                           .Where(ap => ap.SpecialityId == specialityId)
+        var applications = await _applicationRepository.GetAllAsync();
+        var applicationsList = applications.Where(ap => ap.SpecialityId == specialityId)
                            .ToList();
 
-        if (applications.Count == 0)
+        if (applicationsList.Count == 0)
             throw new KeyNotFoundException("No applications found for the specified speciality");
 
-        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applicationsList);
     }
 
     /// <inheritdoc />
-    public IEnumerable<ApplicationDto> GetApplicationsByPriority(int priority)
+    public async Task<IEnumerable<ApplicationDto>> GetApplicationsByPriorityAsync(int priority)
     {
-        var applications = _applicationRepository
-                           .GetAll()
-                           .Where(ap => ap.Priority == priority)
+        var applications = await _applicationRepository.GetAllAsync();
+        var applicationsList = applications.Where(ap => ap.Priority == priority)
                            .ToList();
 
-        if (applications.Count == 0)
+        if (applicationsList.Count == 0)
             throw new KeyNotFoundException("No applications found with the specified priority");
 
-        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applicationsList);
     }
 
     /// <inheritdoc />
-    public IEnumerable<ApplicationDto> GetApplicationsByAbiturientId(int abiturientId)
+    public async Task<IEnumerable<ApplicationDto>> GetApplicationsByAbiturientIdAsync(int abiturientId)
     {
-        if (_abiturientRepository.GetById(abiturientId) == null)
+        if (await _abiturientRepository.GetByIdAsync(abiturientId) == null)
             throw new InvalidOperationException("Cannot retrieve applications for a non-existing abiturient");
 
-        var applications = _applicationRepository
-                           .GetAll()
-                           .Where(ap => ap.AbiturientId == abiturientId)
-                           .ToList();
-        return _mapper.Map<IEnumerable<ApplicationDto>>(applications);
+        var applications = await _applicationRepository.GetAllAsync();
+        var applicationsList = applications.Where(ap => ap.AbiturientId == abiturientId).ToList();
+        return _mapper.Map<IEnumerable<ApplicationDto>>(applicationsList);
     }
 }

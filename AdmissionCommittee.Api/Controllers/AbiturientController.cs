@@ -21,10 +21,10 @@ public class AbiturientController
     /// <returns>A list of abiturients.</returns>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientDto>> Get()
+    public async Task<ActionResult<IEnumerable<AbiturientDto>>> Get()
     {
         _logger.LogInformation("Retrieving all abiturients.");
-        var abiturients = _abiturientService.GetAll();
+        var abiturients = await _abiturientService.GetAllAsync();
         return Ok(abiturients);
     }
 
@@ -35,10 +35,10 @@ public class AbiturientController
     /// <returns>The requested abiturient.</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<AbiturientDto> Get(int id)
+    public async Task<ActionResult<AbiturientDto>> Get(int id)
     {
         _logger.LogInformation("Retrieving abiturient with ID: {id}", id);
-        var abiturient = _abiturientService.GetById(id);
+        var abiturient = await _abiturientService.GetByIdAsync(id);
         return Ok(abiturient);
     }
     /// <summary>
@@ -49,7 +49,7 @@ public class AbiturientController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public IActionResult Add([FromBody] AbiturientCreateDto abiturient)
+    public async Task<IActionResult> Add([FromBody] AbiturientCreateDto abiturient)
     {
         if (!ModelState.IsValid)
         {
@@ -57,7 +57,7 @@ public class AbiturientController
             return BadRequest(ModelState);
         }
         _logger.LogInformation("Adding new abiturient: {abiturient.Name}", abiturient.Name);
-        var id = _abiturientService.Add(abiturient);
+        var id = await _abiturientService.AddAsync(abiturient);
         return CreatedAtAction(nameof(Get), new { id }, abiturient);
     }
 
@@ -69,10 +69,10 @@ public class AbiturientController
     /// <returns>No content if the update is successful.</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Update(int id, [FromBody] AbiturientCreateDto abiturient)
+    public async Task<IActionResult> Update(int id, [FromBody] AbiturientCreateDto abiturient)
     {
         _logger.LogInformation("Updating abiturient with ID: {id}", id);
-        _abiturientService.Update(id, abiturient);
+        await _abiturientService.UpdateAsync(id, abiturient);
         return NoContent();
     }
 
@@ -83,10 +83,10 @@ public class AbiturientController
     /// <returns>No content if the deletion is successful.</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         _logger.LogInformation("Deleting abiturient with ID: {id}", id);
-        _abiturientService.Delete(id);
+        await _abiturientService.DeleteAsync(id);
         return NoContent();
     }
     /// <summary>
@@ -96,10 +96,10 @@ public class AbiturientController
     /// <returns>A list of abiturients from the specified city.</returns>
     [HttpGet("city/{city}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientDto>> GetByCity(string city)
+    public async Task<ActionResult<IEnumerable<AbiturientDto>>> GetByCity(string city)
     {
         _logger.LogInformation("Retrieving abiturients from city: {city}", city);
-        var abiturients = _abiturientService.GetAbiturientsByCity(city);
+        var abiturients = await _abiturientService.GetAbiturientsByCityAsync(city);
         return Ok(abiturients);
     }
 
@@ -110,10 +110,10 @@ public class AbiturientController
     /// <returns>A list of abiturients older than the specified age.</returns>
     [HttpGet("olderthan/{age:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientDto>> GetOlderThan(int age)
+    public async Task<ActionResult<IEnumerable<AbiturientDto>>> GetOlderThan(int age)
     {
         _logger.LogInformation("Retrieving abiturients older than {age} years.", age);
-        var abiturients = _abiturientService.GetAbiturientsOlderThan(age);
+        var abiturients = await _abiturientService.GetAbiturientsOlderThanAsync(age);
         return Ok(abiturients);
     }
 
@@ -124,10 +124,10 @@ public class AbiturientController
     /// <returns>A list of abiturients ordered by their exam results.</returns>
     [HttpGet("speciality/{specialityId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientDto>> GetBySpeciality(int specialityId)
+    public async Task<ActionResult<IEnumerable<AbiturientDto>>> GetBySpeciality(int specialityId)
     {
         _logger.LogInformation("Retrieving abiturients ordered by exam results for speciality {specialityId}.", specialityId);
-        var abiturients = _abiturientService.GetAbiturientBySpecialityOrderedByRates(specialityId);
+        var abiturients = await _abiturientService.GetAbiturientBySpecialityOrderedByRatesAsync(specialityId);
         return Ok(abiturients);
     }
 
@@ -137,10 +137,10 @@ public class AbiturientController
     /// <returns>A list of specialities with the count of abiturients who chose them as their first priority.</returns>
     [HttpGet("firstpriority")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<SpecialitiesCountAsFavoriteDto>> GetFirstPrioritySpecialitiesCount()
+    public async Task<ActionResult<IEnumerable<SpecialitiesCountAsFavoriteDto>>> GetFirstPrioritySpecialitiesCount()
     {
         _logger.LogInformation("Retrieving abiturients count by first priority specialities.");
-        var result = _abiturientService.GetAbiturientsCountByFirstPrioritySpecialities();
+        var result = await _abiturientService.GetAbiturientsCountByFirstPrioritySpecialitiesAsync();
         return Ok(result);
     }
 
@@ -151,10 +151,10 @@ public class AbiturientController
     /// <returns>A list of top-rated abiturients.</returns>
     [HttpGet("toprated/{count:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientWithExamScoresDto>> GetTopRatedAbiturients(int count)
+    public async Task<ActionResult<IEnumerable<AbiturientWithExamScoresDto>>> GetTopRatedAbiturients(int count)
     {
         _logger.LogInformation("Retrieving top rated abiturients in count of: {count}", count);
-        var abiturients = _abiturientService.GetTopRatedAbiturients(count);
+        var abiturients = await _abiturientService.GetTopRatedAbiturientsAsync(count);
         return Ok(abiturients);
     }
 
@@ -164,10 +164,10 @@ public class AbiturientController
     /// <returns>A list of abiturients with the highest exam scores and their favorite specialities.</returns>
     [HttpGet("maxratedfavoritespeciality")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<AbiturientMaxRateDto>> GetMaxRatedAbiturientsWithFavoriteSpeciality()
+    public async Task<ActionResult<IEnumerable<AbiturientMaxRateDto>>> GetMaxRatedAbiturientsWithFavoriteSpeciality()
     {
         _logger.LogInformation("Retrieving abiturients with maximum exam results and their favorite speciality.");
-        var result = _abiturientService.GetMaxRatedAbiturientsWithFavoriteSpeciality();
+        var result = await _abiturientService.GetMaxRatedAbiturientsWithFavoriteSpecialityAsync();
         return Ok(result);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AdmissionCommittee.Domain.Models;
+using System.Threading.Tasks;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -9,30 +10,34 @@ namespace AdmissionCommittee.Domain.Repositories;
 public interface IRepository<T> where T : class, IEntity
 {
     /// <summary>
-    /// Retrieves an entity by its unique identifier.
+    /// Asynchronously retrieves an entity by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity.</param>
-    /// <returns>The entity with the specified identifier, or null if not found.</returns>
-    public T? GetById(int id);
+    /// <returns>A task that represents the asynchronous operation. The task result contains the entity with the specified identifier, or null if not found.</returns>
+    public Task<T?> GetByIdAsync(int id);
+
     /// <summary>
-    /// Get all objects
+    /// Asynchronously gets all objects.
     /// </summary>
-    /// <returns>IEnumerable<typeparamref name="T"/></returns>
-    public IEnumerable<T> GetAll();
+    /// <returns>A task that represents the asynchronous operation. The task result contains an IEnumerable of <typeparamref name="T"/>.</returns>
+    public Task<IEnumerable<T>> GetAllAsync();
+
     /// <summary>
-    /// Updates an existing entity in the in-memory context.
+    /// Asynchronously updates an existing entity in the context.
     /// </summary>
     /// <param name="entity">The entity with updated values.</param>
-    public void Update(T entity);
+    public Task UpdateAsync(T entity);
+
     /// <summary>
-    /// Adds a new entity to the in-memory context.
+    /// Asynchronously adds a new entity to the context.
     /// </summary>
     /// <param name="entity">The entity to add.</param>
-    /// <returns>The added entity's id.</returns>
-    public int Add(T entity);
+    /// <returns>A task that represents the asynchronous operation. The task result contains the added entity's id.</returns>
+    public Task<int> AddAsync(T entity);
+
     /// <summary>
-    /// Deletes an entity from the in-memory context by its unique identifier.
+    /// Asynchronously deletes an entity from the context by its unique identifier.
     /// </summary>
     /// <param name="id">The unique identifier of the entity to delete.</param>
-    public void Delete(int id);
+    public Task DeleteAsync(int id);
 }
