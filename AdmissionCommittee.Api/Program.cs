@@ -41,9 +41,6 @@ builder.Logging.AddDebug();
 
 DotNetEnv.Env.Load();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var dbUser = Environment.GetEnvironmentVariable("DB_USER");
-var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
-connectionString += $"User={dbUser};Password={dbPassword}";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23))));
 
