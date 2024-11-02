@@ -22,7 +22,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Something went wrong: {ex.Message}");
+            _logger.LogError("Something went wrong: {ex.Message}", ex.Message);
             await HandleExceptionAsync(httpContext, ex);
         }
     }
@@ -35,7 +35,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
     /// <returns>A task representing the HTTP response writing process.</returns>
     private Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
-        _logger.LogError($"Handling exception: {ex.GetType().Name} - {ex.Message}");
+        _logger.LogError("Handling exception: {ex.GetType().Name} - {ex.Message}", ex.GetType().Name, ex.Message);
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = ex switch
         {

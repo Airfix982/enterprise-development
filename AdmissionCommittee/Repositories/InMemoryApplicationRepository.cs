@@ -1,4 +1,4 @@
-﻿/*using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -18,15 +18,15 @@ public class InMemoryApplicationRepository : RepositoryInMemory<Application>, IA
     /// <param name="applicationList">List of applications to initialize the repository with.</param>
     public InMemoryApplicationRepository(List<Application> applicationList) : base(applicationList) { }
     /// <inheritdoc />
-    public override void Update(Application application)
+    public override Task UpdateAsync(Application application)
     {
-        var existingApplication = GetById(application.Id);
+        var existingApplication = GetByIdAsync(application.Id).Result;
         if (existingApplication != null)
         {
             existingApplication.SpecialityId = application.SpecialityId;
             existingApplication.AbiturientId = application.AbiturientId;
             existingApplication.Priority = application.Priority;
         }
+        return Task.CompletedTask;
     }
 }
-*/

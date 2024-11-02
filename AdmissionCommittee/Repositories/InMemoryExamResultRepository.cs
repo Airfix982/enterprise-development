@@ -1,4 +1,4 @@
-﻿/*using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -22,15 +22,15 @@ public class InMemoryExamResultRepository : RepositoryInMemory<ExamResult>, IExa
     /// Updates an existing exam result with new values.
     /// </summary>
     /// <param name="examResult">The exam result with updated values.</param>
-    public override void Update(ExamResult examResult)
+    public override Task UpdateAsync(ExamResult examResult)
     {
-        var existingExamResult = GetById(examResult.Id);
+        var existingExamResult = GetByIdAsync(examResult.Id).Result;
         if (existingExamResult != null)
         {
             existingExamResult.AbiturientId = examResult.AbiturientId;
             existingExamResult.ExamName = examResult.ExamName;
             existingExamResult.Result = examResult.Result;
         }
+        return Task.CompletedTask;
     }
 }
-*/

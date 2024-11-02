@@ -1,4 +1,4 @@
-﻿/*using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -23,9 +23,9 @@ public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbi
     /// Updates an existing abiturient's details in the repository.
     /// </summary>
     /// <param name="abiturient">Abiturient object with updated information.</param>
-    public override void Update(Abiturient abiturient)
+    public override Task UpdateAsync(Abiturient abiturient)
     {
-        var existingAbiturient = GetById(abiturient.Id);
+        var existingAbiturient = GetByIdAsync(abiturient.Id).Result;
         if (existingAbiturient != null)
         {
             existingAbiturient.Name = abiturient.Name;
@@ -34,6 +34,6 @@ public class InMemoryAbiturientRepository : RepositoryInMemory<Abiturient>, IAbi
             existingAbiturient.Country = abiturient.Country;
             existingAbiturient.City = abiturient.City;
         }
+        return Task.CompletedTask;
     }
 }
-*/

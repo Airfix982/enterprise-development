@@ -1,4 +1,4 @@
-﻿/*using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -22,15 +22,15 @@ public class InMemorySpecialityRepository : RepositoryInMemory<Speciality>, ISpe
     /// Updates an existing speciality with new data.
     /// </summary>
     /// <param name="speciality">The updated speciality entity.</param>
-    public override void Update(Speciality speciality)
+    public override Task UpdateAsync(Speciality speciality)
     {
-        var existingSpeciality = GetById(speciality.Id);
+        var existingSpeciality = GetByIdAsync(speciality.Id).Result;
         if (existingSpeciality != null)
         {
             existingSpeciality.Number = speciality.Number;
             existingSpeciality.Name = speciality.Name;
             existingSpeciality.Facility = speciality.Facility;
         }
+        return Task.CompletedTask;
     }
 }
-*/

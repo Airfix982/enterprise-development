@@ -1,7 +1,7 @@
 ﻿namespace AdmissionCommittee.Domain.Dto;
 
 /// <summary>
-/// Dto of a count of abiturients who selected the speciality as fvorite one
+/// Dto of a count of abiturients who selected the speciality as favorite one
 /// </summary>
 public class SpecialitiesCountAsFavoriteDto
 {

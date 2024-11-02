@@ -1,4 +1,4 @@
-﻿/*using AdmissionCommittee.Domain.Models;
+﻿using AdmissionCommittee.Domain.Models;
 
 namespace AdmissionCommittee.Domain.Repositories;
 
@@ -28,29 +28,33 @@ public class RepositoryInMemory<T> : IRepository<T> where T : class, IEntity
         _context = initData;
     }
     /// <inheritdoc />
-    public IEnumerable<T> GetAll() => _context;
-    /// <inheritdoc />
-    public T? GetById(int id)
+    public Task<IEnumerable<T>> GetAllAsync()
     {
-        return _context.FirstOrDefault(entity => entity.Id == id);
+        return Task.FromResult<IEnumerable<T>>(_context);
     }
     /// <inheritdoc />
-    public int Add(T entity)
+    public Task<T?> GetByIdAsync(int id)
+    {
+        return Task.FromResult(_context.FirstOrDefault(entity => entity.Id == id));
+    }
+    /// <inheritdoc />
+    public Task<int> AddAsync(T entity)
     {
         entity.Id = _currentId++;
         _context.Add(entity);
-        return entity.Id;
+        return Task.FromResult(entity.Id);
     }
     /// <inheritdoc />
-    public virtual void Update(T entity)
+    public virtual Task UpdateAsync(T entity)
     {
+        return Task.CompletedTask;
     }
     /// <inheritdoc />
-    public void Delete(int id)
+    public Task DeleteAsync(int id)
     {
-        var entity = GetById(id);
+        var entity = GetByIdAsync(id).Result;
         if (entity != null)
             _context.Remove(entity);
+        return Task.CompletedTask;
     }
 }
-*/
