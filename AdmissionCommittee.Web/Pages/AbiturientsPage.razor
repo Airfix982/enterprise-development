@@ -1,0 +1,64 @@
+﻿@page "/abiturientspage"
+@inject Client ApiClient
+
+<h3>Abiturient Management</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">Error: @errorMessage</p>
+}
+
+<button @onclick="LoadAllAbiturients">Get All Abiturients</button>
+
+@if (abiturients != null && abiturients.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in abiturients)
+            {
+                <tr>
+                    <td>@abiturient.Id</td>
+                    <td>@abiturient.Name</td>
+                    <td>@abiturient.Last_name</td>
+                    <td>@abiturient.Birthday_date</td>
+                    <td>@abiturient.Country</td>
+                    <td>@abiturient.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (abiturients != null && !abiturients.Any())
+{
+    <p>No abiturients found.</p>
+}
+
+@code {
+    private IEnumerable<AbiturientDto>? abiturients;
+    private string? errorMessage;
+
+    // Метод для загрузки всех абитуриентов
+    private async Task LoadAllAbiturients()
+    {
+        try
+        {
+            abiturients = await ApiClient.AbiturientAllAsync();
+            errorMessage = null; // Обнуляем сообщение об ошибке, если загрузка успешна
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load abiturients: {ex.Message}";
+            abiturients = null; // Обнуляем список в случае ошибки
+        }
+    }
+}

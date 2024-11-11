@@ -19,6 +19,15 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add(new ValidateModelAttribute());
 });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -43,7 +52,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 23))));
 
 var app = builder.Build();
-
+app.UseCors();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.

@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdmissionCommittee.Domain",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdmissionCommittee.Tests", "AdmissionCommittee.Tests\AdmissionCommittee.Tests.csproj", "{0019ADF3-1B44-4670-933A-6AA79987BACE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdmissionCommittee.Api", "AdmissionCommittee.Api\AdmissionCommittee.Api.csproj", "{6D8B9769-9F86-43C6-BAC3-39525C8AB8CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdmissionCommittee.Api", "AdmissionCommittee.Api\AdmissionCommittee.Api.csproj", "{6D8B9769-9F86-43C6-BAC3-39525C8AB8CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdmissionCommittee.Web", "AdmissionCommittee.Web\AdmissionCommittee.Web.csproj", "{2A4BC71F-AA3B-42DB-89DD-728188048B7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{6D8B9769-9F86-43C6-BAC3-39525C8AB8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D8B9769-9F86-43C6-BAC3-39525C8AB8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D8B9769-9F86-43C6-BAC3-39525C8AB8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A4BC71F-AA3B-42DB-89DD-728188048B7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A4BC71F-AA3B-42DB-89DD-728188048B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A4BC71F-AA3B-42DB-89DD-728188048B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A4BC71F-AA3B-42DB-89DD-728188048B7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
