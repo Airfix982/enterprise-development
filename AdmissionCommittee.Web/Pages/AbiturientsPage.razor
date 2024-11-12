@@ -43,22 +43,539 @@ else if (abiturients != null && !abiturients.Any())
     <p>No abiturients found.</p>
 }
 
+<hr />
+
+<h4>Find Abiturient by ID</h4>
+<input type="number" @bind="searchId" placeholder="Enter Abiturient ID" />
+<button @onclick="LoadAbiturientById">Find Abiturient</button>
+
+@if (foundAbiturient != null)
+{
+    <h5>Abiturient Details</h5>
+    <p><strong>ID:</strong> @foundAbiturient.Id</p>
+    <p><strong>First Name:</strong> @foundAbiturient.Name</p>
+    <p><strong>Last Name:</strong> @foundAbiturient.Last_name</p>
+    <p><strong>Birthday Date:</strong> @foundAbiturient.Birthday_date</p>
+    <p><strong>Country:</strong> @foundAbiturient.Country</p>
+    <p><strong>City:</strong> @foundAbiturient.City</p>
+}
+
+<hr />
+
+<h4>Add New Abiturient</h4>
+<div>
+    <label>First Name:</label>
+    <input type="text" @bind="newAbiturient.Name" placeholder="Enter First Name" />
+    <br />
+    <label>Last Name:</label>
+    <input type="text" @bind="newAbiturient.Last_name" placeholder="Enter Last Name" />
+    <br />
+    <label>Birthday Date:</label>
+    <input type="date" @bind="newAbiturient.Birthday_date" />
+    <br />
+    <label>Country:</label>
+    <input type="text" @bind="newAbiturient.Country" placeholder="Enter Country" />
+    <br />
+    <label>City:</label>
+    <input type="text" @bind="newAbiturient.City" placeholder="Enter City" />
+</div>
+<button @onclick="AddAbiturient">Add Abiturient</button>
+
+<hr />
+
+<h4>Edit Abiturient</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <button @onclick="LoadAbiturientForEdit">Load Abiturient</button>
+</div>
+
+<hr />
+<h4>Delete Abiturient</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <button @onclick="DeleteAbiturient">Delete Abiturient</button>
+</div>
+
+
+@if (editAbiturient != null)
+{
+    <div>
+        <label>First Name:</label>
+        <input type="text" @bind="editAbiturient.Name" />
+        <br />
+        <label>Last Name:</label>
+        <input type="text" @bind="editAbiturient.Last_name" />
+        <br />
+        <label>Birthday Date:</label>
+        <input type="date" @bind="editAbiturient.Birthday_date" />
+        <br />
+        <label>Country:</label>
+        <input type="text" @bind="editAbiturient.Country" />
+        <br />
+        <label>City:</label>
+        <input type="text" @bind="editAbiturient.City" />
+    </div>
+    <button @onclick="UpdateAbiturient">Save Changes</button>
+}
+
+<hr />
+<h4>Get Abiturients by City</h4>
+<input type="text" @bind="cityName" placeholder="Enter City Name" />
+<button @onclick="LoadAbiturientsByCity">Get Abiturients By City</button>
+
+@if (abiturientsCity != null && abiturientsCity.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in abiturientsCity)
+            {
+                <tr>
+                    <td>@abiturient.Id</td>
+                    <td>@abiturient.Name</td>
+                    <td>@abiturient.Last_name</td>
+                    <td>@abiturient.Birthday_date</td>
+                    <td>@abiturient.Country</td>
+                    <td>@abiturient.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (abiturients != null && !abiturients.Any())
+{
+    <p>No abiturients found.</p>
+}
+
+<hr />
+
+<h4>Get Abiturients by Age</h4>
+<input type="number" @bind="minAge" placeholder="Enter Minimum Age" />
+<button @onclick="LoadAbiturientsByAge">Get Abiturients Older Than</button>
+
+@if (abiturientsByAge != null && abiturientsByAge.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in abiturientsByAge)
+            {
+                <tr>
+                    <td>@abiturient.Id</td>
+                    <td>@abiturient.Name</td>
+                    <td>@abiturient.Last_name</td>
+                    <td>@abiturient.Birthday_date</td>
+                    <td>@abiturient.Country</td>
+                    <td>@abiturient.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>Get Top-Rated Abiturients</h4>
+<input type="number" @bind="topCount" placeholder="Enter Number of Top Abiturients" />
+<button @onclick="LoadTopRatedAbiturients">Get Top-Rated Abiturients</button>
+
+@if (topRatedAbiturients != null && topRatedAbiturients.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Exam Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in topRatedAbiturients)
+            {
+                <tr>
+                    <td>@abiturient.Abiturient.Id</td>
+                    <td>@abiturient.Abiturient.Name</td>
+                    <td>@abiturient.Abiturient.LastName</td>
+                    <td>@abiturient.Abiturient.BirthdayDate</td>
+                    <td>@abiturient.Abiturient.Country</td>
+                    <td>@abiturient.Abiturient.City</td>
+                    <td>@abiturient.ResultsSum</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>Get Max-Rated Abiturients with Favorite Specialities</h4>
+<button @onclick="LoadMaxRatedAbiturientsWithFavoriteSpecialities">Get Max-Rated Abiturients</button>
+
+@if (maxRatedAbiturients != null && maxRatedAbiturients.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Favorite Speciality Id</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in maxRatedAbiturients)
+            {
+                <tr>
+                    <td>@abiturient.Abiturient.Id</td>
+                    <td>@abiturient.Abiturient.Name</td>
+                    <td>@abiturient.Abiturient.LastName</td>
+                    <td>@abiturient.Abiturient.BirthdayDate</td>
+                    <td>@abiturient.Abiturient.Country</td>
+                    <td>@abiturient.Abiturient.City</td>
+                    <td>@abiturient.FavoriteSpecialityId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>Get Abiturients by Speciality</h4>
+<input type="number" @bind="specialityId" placeholder="Enter Speciality ID" />
+<button @onclick="LoadAbiturientsBySpeciality">Get Abiturients by Speciality</button>
+
+@if (abiturientsBySpeciality != null && abiturientsBySpeciality.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birthday Date</th>
+                <th>Country</th>
+                <th>City</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var abiturient in abiturientsBySpeciality)
+            {
+                <tr>
+                    <td>@abiturient.Id</td>
+                    <td>@abiturient.Name</td>
+                    <td>@abiturient.Last_name</td>
+                    <td>@abiturient.Birthday_date</td>
+                    <td>@abiturient.Country</td>
+                    <td>@abiturient.City</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<hr />
+
+<h4>Get First-Priority Speciality Count</h4>
+<button @onclick="LoadFirstPrioritySpecialityCount">Get Speciality Count as First Priority</button>
+
+@if (firstPrioritySpecialityCounts != null && firstPrioritySpecialityCounts.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Speciality ID</th>
+                <th>Abiturient Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var count in firstPrioritySpecialityCounts)
+            {
+                <tr>
+                    <td>@count.SpecialityId</td>
+                    <td>@count.AbiturientsCount</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
 @code {
     private IEnumerable<AbiturientDto>? abiturients;
+    private AbiturientDto? foundAbiturient;
+    private IEnumerable<AbiturientDto>? abiturientsCity;
+    private AbiturientCreateDto newAbiturient = new AbiturientCreateDto();
+    private AbiturientCreateDto? editAbiturient;
+    private IEnumerable<AbiturientDto>? abiturientsByAge;
+    private IEnumerable<AbiturientWithExamScoresDto>? topRatedAbiturients;
+    private IEnumerable<AbiturientDto>? abiturientsBySpeciality;
+    private IEnumerable<SpecialitiesCountAsFavoriteDto>? firstPrioritySpecialityCounts;
+    private IEnumerable<AbiturientMaxRateDto>? maxRatedAbiturients;
+    private int editId;
+    private int searchId;
+    private int deleteId;
+    private string? cityName;
+    private int minAge;
+    private int topCount;
+    private int specialityId;
     private string? errorMessage;
 
-    // Метод для загрузки всех абитуриентов
     private async Task LoadAllAbiturients()
     {
         try
         {
             abiturients = await ApiClient.AbiturientAllAsync();
-            errorMessage = null; // Обнуляем сообщение об ошибке, если загрузка успешна
+            errorMessage = null;
         }
         catch (ApiException ex)
         {
             errorMessage = $"Failed to load abiturients: {ex.Message}";
-            abiturients = null; // Обнуляем список в случае ошибки
+            abiturients = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadAbiturientById()
+    {
+        try
+        {
+            foundAbiturient = await ApiClient.AbiturientGETAsync(searchId);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"{ex.Message}";
+            foundAbiturient = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task AddAbiturient()
+    {
+        try
+        {
+            await ApiClient.AbiturientPOSTAsync(newAbiturient);
+            errorMessage = "Abiturient added successfully.";
+            newAbiturient = new AbiturientCreateDto();
+        }
+        catch (ApiException ex)
+        {
+            Console.WriteLine(ex);
+            errorMessage = $"Failed to add abiturient: {ex.Message}";
+        }
+        catch(Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadAbiturientForEdit()
+    {
+        try
+        {
+            var abiturient = await ApiClient.AbiturientGETAsync(editId);
+            editAbiturient = new AbiturientCreateDto
+                {
+                    Name = abiturient.Name,
+                    Last_name = abiturient.Last_name,
+                    Birthday_date = abiturient.Birthday_date,
+                    Country = abiturient.Country,
+                    City = abiturient.City
+                };
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load abiturient with ID {editId}: {ex.Message}";
+            editAbiturient = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            editAbiturient = null;
+        }
+    }
+
+    private async Task UpdateAbiturient()
+    {
+        try
+        {
+            await ApiClient.AbiturientPUTAsync(editId, editAbiturient);
+            errorMessage = "Abiturient updated successfully.";
+            editAbiturient = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to update abiturient with ID {editId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteAbiturient()
+    {
+        try
+        {
+            await ApiClient.AbiturientDELETEAsync(deleteId);
+            errorMessage = "Abiturient deleted successfully.";
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to delete abiturient with ID {deleteId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadAbiturientsByCity()
+    {
+        try
+        {
+            abiturientsCity = await ApiClient.CityAsync(cityName);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"{ex.Message}";
+            abiturientsCity = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            abiturientsCity = null;
+        }
+    }
+
+    private async Task LoadAbiturientsByAge()
+    {
+        try
+        {
+            abiturientsByAge = await ApiClient.OlderthanAsync(minAge);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load abiturients older than {minAge}: {ex.Message}";
+            abiturientsCity = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            abiturientsCity = null;
+        }
+    }
+
+    private async Task LoadTopRatedAbiturients()
+    {
+        try
+        {
+            topRatedAbiturients = await ApiClient.TopratedAsync(topCount);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load top-rated abiturients: {ex.Message}";
+            topRatedAbiturients = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            topRatedAbiturients = null;
+        }
+    }
+
+    private async Task LoadMaxRatedAbiturientsWithFavoriteSpecialities()
+    {
+        try
+        {
+            maxRatedAbiturients = await ApiClient.MaxratedfavoritespecialityAsync();
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load max-rated abiturients: {ex.Message}";
+            maxRatedAbiturients = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            maxRatedAbiturients = null;
+        }
+    }
+
+    private async Task LoadAbiturientsBySpeciality()
+    {
+        try
+        {
+            abiturientsBySpeciality = await ApiClient.SpecialityAsync(specialityId);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load abiturients by speciality ID {specialityId}: {ex.Message}";
+            abiturientsBySpeciality = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            abiturientsBySpeciality = null;
+        }
+    }
+
+    private async Task LoadFirstPrioritySpecialityCount()
+    {
+        try
+        {
+            firstPrioritySpecialityCounts = await ApiClient.FirstpriorityAsync();
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load speciality count as first priority: {ex.Message}";
+            firstPrioritySpecialityCounts = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            firstPrioritySpecialityCounts = null;
         }
     }
 }
