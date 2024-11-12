@@ -1,0 +1,228 @@
+﻿@page "/examresultspage"
+@inject Client ApiClient
+
+<h3>Exam Results Management</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">Error: @errorMessage</p>
+}
+
+<button @onclick="LoadAllExamResults">Get All Exam Results</button>
+
+@if (examResults != null && examResults.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Abiturient ID</th>
+                <th>Exam Name</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var examResult in examResults)
+            {
+                <tr>
+                    <td>@examResult.Id</td>
+                    <td>@examResult.Abiturient_id</td>
+                    <td>@examResult.Exam_name</td>
+                    <td>@examResult.Result</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (examResults != null && !examResults.Any())
+{
+    <p>No exam results found.</p>
+}
+
+<hr />
+
+<h4>Find Exam Result by ID</h4>
+<input type="number" @bind="searchId" placeholder="Enter Exam Result ID" />
+<button @onclick="LoadExamResultById">Find Exam Result</button>
+
+@if (foundExamResult != null)
+{
+    <h5>Exam Result Details</h5>
+    <p><strong>ID:</strong> @foundExamResult.Id</p>
+    <p><strong>Abiturient ID:</strong> @foundExamResult.Abiturient_id</p>
+    <p><strong>Exam Name:</strong> @foundExamResult.Exam_name</p>
+    <p><strong>Result:</strong> @foundExamResult.Result</p>
+}
+
+<hr />
+
+<h4>Add New Exam Result</h4>
+<div>
+    <label>Abiturient ID:</label>
+    <input type="number" @bind="newExamResult.Abiturient_id" placeholder="Enter Abiturient ID" />
+    <br />
+    <label>Exam Name:</label>
+    <input type="text" @bind="newExamResult.Exam_name" placeholder="Enter Exam Name" />
+    <br />
+    <label>Result:</label>
+    <input type="number" @bind="newExamResult.Result" placeholder="Enter Result (0-100)" />
+</div>
+<button @onclick="AddExamResult">Add Exam Result</button>
+
+<hr />
+
+<h4>Edit Exam Result</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <button @onclick="LoadExamResultForEdit">Load Exam Result</button>
+</div>
+
+@if (editExamResult != null)
+{
+    <div>
+        <label>Abiturient ID:</label>
+        <input type="number" @bind="editExamResult.Abiturient_id" />
+        <br />
+        <label>Exam Name:</label>
+        <input type="text" @bind="editExamResult.Exam_name" />
+        <br />
+        <label>Result:</label>
+        <input type="number" @bind="editExamResult.Result" />
+    </div>
+    <button @onclick="UpdateExamResult">Save Changes</button>
+}
+
+<hr />
+
+<h4>Delete Exam Result</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <button @onclick="DeleteExamResult">Delete Exam Result</button>
+</div>
+
+@code {
+    private IEnumerable<ExamResultDto>? examResults;
+    private ExamResultDto? foundExamResult;
+    private ExamResultCreateDto newExamResult = new ExamResultCreateDto();
+    private ExamResultCreateDto? editExamResult;
+    private int editId;
+    private int searchId;
+    private int deleteId;
+    private string? errorMessage;
+
+    private async Task LoadAllExamResults()
+    {
+        try
+        {
+            examResults = await ApiClient.ExamResultAllAsync();
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load exam results: {ex.Message}";
+            examResults = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadExamResultById()
+    {
+        try
+        {
+            foundExamResult = await ApiClient.ExamResultGETAsync(searchId);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to find exam result: {ex.Message}";
+            foundExamResult = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task AddExamResult()
+    {
+        try
+        {
+            await ApiClient.ExamResultPOSTAsync(newExamResult);
+            errorMessage = "Exam result added successfully.";
+            newExamResult = new ExamResultCreateDto();
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to add exam result: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadExamResultForEdit()
+    {
+        try
+        {
+            var examResult = await ApiClient.ExamResultGETAsync(editId);
+            editExamResult = new ExamResultCreateDto
+                {
+                    Abiturient_id = examResult.Abiturient_id,
+                    Exam_name = examResult.Exam_name,
+                    Result = examResult.Result
+                };
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load exam result with ID {editId}: {ex.Message}";
+            editExamResult = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            editExamResult = null;
+        }
+    }
+
+    private async Task UpdateExamResult()
+    {
+        try
+        {
+            await ApiClient.ExamResultPUTAsync(editId, editExamResult);
+            errorMessage = "Exam result updated successfully.";
+            editExamResult = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to update exam result with ID {editId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteExamResult()
+    {
+        try
+        {
+            await ApiClient.ExamResultDELETEAsync(deleteId);
+            errorMessage = "Exam result deleted successfully.";
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to delete exam result with ID {deleteId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+}

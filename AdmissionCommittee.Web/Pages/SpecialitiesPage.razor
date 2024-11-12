@@ -1,0 +1,228 @@
+﻿@page "/specialitiespage"
+@inject Client ApiClient
+
+<h3>Specialities Management</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">Error: @errorMessage</p>
+}
+
+<button @onclick="LoadAllSpecialities">Get All Specialities</button>
+
+@if (specialities != null && specialities.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Number</th>
+                <th>Facility</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var speciality in specialities)
+            {
+                <tr>
+                    <td>@speciality.Id</td>
+                    <td>@speciality.Name</td>
+                    <td>@speciality.Number</td>
+                    <td>@speciality.Facility</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (specialities != null && !specialities.Any())
+{
+    <p>No specialities found.</p>
+}
+
+<hr />
+
+<h4>Find Speciality by ID</h4>
+<input type="number" @bind="searchId" placeholder="Enter Speciality ID" />
+<button @onclick="LoadSpecialityById">Find Speciality</button>
+
+@if (foundSpeciality != null)
+{
+    <h5>Speciality Details</h5>
+    <p><strong>ID:</strong> @foundSpeciality.Id</p>
+    <p><strong>Name:</strong> @foundSpeciality.Name</p>
+    <p><strong>Number:</strong> @foundSpeciality.Number</p>
+    <p><strong>Facility:</strong> @foundSpeciality.Facility</p>
+}
+
+<hr />
+
+<h4>Add New Speciality</h4>
+<div>
+    <label>Name:</label>
+    <input type="text" @bind="newSpeciality.Name" placeholder="Enter Name" />
+    <br />
+    <label>Number:</label>
+    <input type="text" @bind="newSpeciality.Number" placeholder="Enter Number" />
+    <br />
+    <label>Facility:</label>
+    <input type="text" @bind="newSpeciality.Facility" placeholder="Enter Facility" />
+</div>
+<button @onclick="AddSpeciality">Add Speciality</button>
+
+<hr />
+
+<h4>Edit Speciality</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <button @onclick="LoadSpecialityForEdit">Load Speciality</button>
+</div>
+
+@if (editSpeciality != null)
+{
+    <div>
+        <label>Name:</label>
+        <input type="text" @bind="editSpeciality.Name" />
+        <br />
+        <label>Number:</label>
+        <input type="text" @bind="editSpeciality.Number" />
+        <br />
+        <label>Facility:</label>
+        <input type="text" @bind="editSpeciality.Facility" />
+    </div>
+    <button @onclick="UpdateSpeciality">Save Changes</button>
+}
+
+<hr />
+
+<h4>Delete Speciality</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <button @onclick="DeleteSpeciality">Delete Speciality</button>
+</div>
+
+@code {
+    private IEnumerable<SpecialityDto>? specialities;
+    private SpecialityDto? foundSpeciality;
+    private SpecialityCreateDto newSpeciality = new SpecialityCreateDto();
+    private SpecialityCreateDto? editSpeciality;
+    private int editId;
+    private int searchId;
+    private int deleteId;
+    private string? errorMessage;
+
+    private async Task LoadAllSpecialities()
+    {
+        try
+        {
+            specialities = await ApiClient.SpecialityAllAsync();
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load specialities: {ex.Message}";
+            specialities = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadSpecialityById()
+    {
+        try
+        {
+            foundSpeciality = await ApiClient.SpecialityGETAsync(searchId);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to find speciality: {ex.Message}";
+            foundSpeciality = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task AddSpeciality()
+    {
+        try
+        {
+            await ApiClient.SpecialityPOSTAsync(newSpeciality);
+            errorMessage = "Speciality added successfully.";
+            newSpeciality = new SpecialityCreateDto();
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to add speciality: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadSpecialityForEdit()
+    {
+        try
+        {
+            var speciality = await ApiClient.SpecialityGETAsync(editId);
+            editSpeciality = new SpecialityCreateDto
+                {
+                    Name = speciality.Name,
+                    Number = speciality.Number,
+                    Facility = speciality.Facility
+                };
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load speciality with ID {editId}: {ex.Message}";
+            editSpeciality = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            editSpeciality = null;
+        }
+    }
+
+    private async Task UpdateSpeciality()
+    {
+        try
+        {
+            await ApiClient.SpecialityPUTAsync(editId, editSpeciality);
+            errorMessage = "Speciality updated successfully.";
+            editSpeciality = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to update speciality with ID {editId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteSpeciality()
+    {
+        try
+        {
+            await ApiClient.SpecialityDELETEAsync(deleteId);
+            errorMessage = "Speciality deleted successfully.";
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to delete speciality with ID {deleteId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+}

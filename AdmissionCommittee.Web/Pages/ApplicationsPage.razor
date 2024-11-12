@@ -1,0 +1,228 @@
+﻿@page "/applicationspage"
+@inject Client ApiClient
+
+<h3>Applications Management</h3>
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color:red;">Error: @errorMessage</p>
+}
+
+<button @onclick="LoadAllApplications">Get All Applications</button>
+
+@if (applications != null && applications.Any())
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Speciality ID</th>
+                <th>Abiturient ID</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var application in applications)
+            {
+                <tr>
+                    <td>@application.Id</td>
+                    <td>@application.Speciality_id</td>
+                    <td>@application.Abiturient_id</td>
+                    <td>@application.Priority</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else if (applications != null && !applications.Any())
+{
+    <p>No applications found.</p>
+}
+
+<hr />
+
+<h4>Find Application by ID</h4>
+<input type="number" @bind="searchId" placeholder="Enter Application ID" />
+<button @onclick="LoadApplicationById">Find Application</button>
+
+@if (foundApplication != null)
+{
+    <h5>Application Details</h5>
+    <p><strong>ID:</strong> @foundApplication.Id</p>
+    <p><strong>Speciality ID:</strong> @foundApplication.Speciality_id</p>
+    <p><strong>Abiturient ID:</strong> @foundApplication.Abiturient_id</p>
+    <p><strong>Priority:</strong> @foundApplication.Priority</p>
+}
+
+<hr />
+
+<h4>Add New Application</h4>
+<div>
+    <label>Speciality ID:</label>
+    <input type="number" @bind="newApplication.Speciality_id" placeholder="Enter Speciality ID" />
+    <br />
+    <label>Abiturient ID:</label>
+    <input type="number" @bind="newApplication.Abiturient_id" placeholder="Enter Abiturient ID" />
+    <br />
+    <label>Priority:</label>
+    <input type="number" @bind="newApplication.Priority" placeholder="Enter Priority (1-3)" />
+</div>
+<button @onclick="AddApplication">Add Application</button>
+
+<hr />
+
+<h4>Edit Application</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <button @onclick="LoadApplicationForEdit">Load Application</button>
+</div>
+
+@if (editApplication != null)
+{
+    <div>
+        <label>Speciality ID:</label>
+        <input type="number" @bind="editApplication.Speciality_id" />
+        <br />
+        <label>Abiturient ID:</label>
+        <input type="number" @bind="editApplication.Abiturient_id" />
+        <br />
+        <label>Priority:</label>
+        <input type="number" @bind="editApplication.Priority" />
+    </div>
+    <button @onclick="UpdateApplication">Save Changes</button>
+}
+
+<hr />
+
+<h4>Delete Application</h4>
+<div>
+    <label>ID:</label>
+    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <button @onclick="DeleteApplication">Delete Application</button>
+</div>
+
+@code {
+    private IEnumerable<ApplicationDto>? applications;
+    private ApplicationDto? foundApplication;
+    private ApplicationCreateDto newApplication = new ApplicationCreateDto();
+    private ApplicationCreateDto? editApplication;
+    private int editId;
+    private int searchId;
+    private int deleteId;
+    private string? errorMessage;
+
+    private async Task LoadAllApplications()
+    {
+        try
+        {
+            applications = await ApiClient.ApplicationAllAsync();
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load applications: {ex.Message}";
+            applications = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadApplicationById()
+    {
+        try
+        {
+            foundApplication = await ApiClient.ApplicationGETAsync(searchId);
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to find application: {ex.Message}";
+            foundApplication = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task AddApplication()
+    {
+        try
+        {
+            await ApiClient.ApplicationPOSTAsync(newApplication);
+            errorMessage = "Application added successfully.";
+            newApplication = new ApplicationCreateDto();
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to add application: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task LoadApplicationForEdit()
+    {
+        try
+        {
+            var application = await ApiClient.ApplicationGETAsync(editId);
+            editApplication = new ApplicationCreateDto
+                {
+                    Speciality_id = application.Speciality_id,
+                    Abiturient_id = application.Abiturient_id,
+                    Priority = application.Priority
+                };
+            errorMessage = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to load application with ID {editId}: {ex.Message}";
+            editApplication = null;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+            editApplication = null;
+        }
+    }
+
+    private async Task UpdateApplication()
+    {
+        try
+        {
+            await ApiClient.ApplicationPUTAsync(editId, editApplication);
+            errorMessage = "Application updated successfully.";
+            editApplication = null;
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to update application with ID {editId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteApplication()
+    {
+        try
+        {
+            await ApiClient.ApplicationDELETEAsync(deleteId);
+            errorMessage = "Application deleted successfully.";
+        }
+        catch (ApiException ex)
+        {
+            errorMessage = $"Failed to delete application with ID {deleteId}: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+}

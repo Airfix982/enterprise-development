@@ -494,12 +494,12 @@ else if (abiturients != null && !abiturients.Any())
         catch (ApiException ex)
         {
             errorMessage = $"Failed to load abiturients older than {minAge}: {ex.Message}";
-            abiturientsCity = null;
+            abiturientsByAge = null;
         }
         catch (Exception ex)
         {
             errorMessage = $"Unknown error: {ex.Message}";
-            abiturientsCity = null;
+            abiturientsByAge = null;
         }
     }
 
