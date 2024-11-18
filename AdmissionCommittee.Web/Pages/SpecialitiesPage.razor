@@ -3,14 +3,14 @@
 
 <h3>Specialities Management</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
+@if (!string.IsNullOrEmpty(_errorMessage))
 {
-    <p style="color:red;">Error: @errorMessage</p>
+    <p style="color:red;">Error: @_errorMessage</p>
 }
 
 <button @onclick="LoadAllSpecialities">Get All Specialities</button>
 
-@if (specialities != null && specialities.Any())
+@if (_specialities != null && _specialities.Any())
 {
     <table>
         <thead>
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var speciality in specialities)
+            @foreach (var speciality in _specialities)
             {
                 <tr>
                     <td>@speciality.Id</td>
@@ -34,7 +34,7 @@
         </tbody>
     </table>
 }
-else if (specialities != null && !specialities.Any())
+else if (_specialities != null && !_specialities.Any())
 {
     <p>No specialities found.</p>
 }
@@ -42,16 +42,16 @@ else if (specialities != null && !specialities.Any())
 <hr />
 
 <h4>Find Speciality by ID</h4>
-<input type="number" @bind="searchId" placeholder="Enter Speciality ID" />
+<input type="number" @bind="_searchId" placeholder="Enter Speciality ID" />
 <button @onclick="LoadSpecialityById">Find Speciality</button>
 
-@if (foundSpeciality != null)
+@if (_foundSpeciality != null)
 {
     <h5>Speciality Details</h5>
-    <p><strong>ID:</strong> @foundSpeciality.Id</p>
-    <p><strong>Name:</strong> @foundSpeciality.Name</p>
-    <p><strong>Number:</strong> @foundSpeciality.Number</p>
-    <p><strong>Facility:</strong> @foundSpeciality.Facility</p>
+    <p><strong>ID:</strong> @_foundSpeciality.Id</p>
+    <p><strong>Name:</strong> @_foundSpeciality.Name</p>
+    <p><strong>Number:</strong> @_foundSpeciality.Number</p>
+    <p><strong>Facility:</strong> @_foundSpeciality.Facility</p>
 }
 
 <hr />
@@ -59,36 +59,40 @@ else if (specialities != null && !specialities.Any())
 <h4>Add New Speciality</h4>
 <div>
     <label>Name:</label>
-    <input type="text" @bind="newSpeciality.Name" placeholder="Enter Name" />
+    <input type="text" @bind="_newSpeciality.Name" placeholder="Enter Name" />
     <br />
     <label>Number:</label>
-    <input type="text" @bind="newSpeciality.Number" placeholder="Enter Number" />
+    <input type="text" @bind="_newSpeciality.Number" placeholder="Enter Number" />
     <br />
     <label>Facility:</label>
-    <input type="text" @bind="newSpeciality.Facility" placeholder="Enter Facility" />
+    <input type="text" @bind="_newSpeciality.Facility" placeholder="Enter Facility" />
+    @if (!string.IsNullOrEmpty(_validationError))
+    {
+        <p style="color:red;">@_validationError</p>
+    }
 </div>
-<button @onclick="AddSpeciality">Add Speciality</button>
+<button @onclick="ValidateAndAddSpeciality">Add Speciality</button>
 
 <hr />
 
 <h4>Edit Speciality</h4>
 <div>
     <label>ID:</label>
-    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <input type="number" @bind="_editId" placeholder="Enter ID to edit" />
     <button @onclick="LoadSpecialityForEdit">Load Speciality</button>
 </div>
 
-@if (editSpeciality != null)
+@if (_editSpeciality != null)
 {
     <div>
         <label>Name:</label>
-        <input type="text" @bind="editSpeciality.Name" />
+        <input type="text" @bind="_editSpeciality.Name" />
         <br />
         <label>Number:</label>
-        <input type="text" @bind="editSpeciality.Number" />
+        <input type="text" @bind="_editSpeciality.Number" />
         <br />
         <label>Facility:</label>
-        <input type="text" @bind="editSpeciality.Facility" />
+        <input type="text" @bind="_editSpeciality.Facility" />
     </div>
     <button @onclick="UpdateSpeciality">Save Changes</button>
 }
@@ -98,35 +102,36 @@ else if (specialities != null && !specialities.Any())
 <h4>Delete Speciality</h4>
 <div>
     <label>ID:</label>
-    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <input type="number" @bind="_deleteId" placeholder="Enter ID to delete" />
     <button @onclick="DeleteSpeciality">Delete Speciality</button>
 </div>
 
 @code {
-    private IEnumerable<SpecialityDto>? specialities;
-    private SpecialityDto? foundSpeciality;
-    private SpecialityCreateDto newSpeciality = new SpecialityCreateDto();
-    private SpecialityCreateDto? editSpeciality;
-    private int editId;
-    private int searchId;
-    private int deleteId;
-    private string? errorMessage;
+    private IEnumerable<SpecialityDto>? _specialities;
+    private SpecialityDto? _foundSpeciality;
+    private SpecialityCreateDto _newSpeciality = new SpecialityCreateDto();
+    private SpecialityCreateDto? _editSpeciality;
+    private int _editId;
+    private int _searchId;
+    private int _deleteId;
+    private string? _errorMessage;
+    private string? _validationError;
 
     private async Task LoadAllSpecialities()
     {
         try
         {
-            specialities = await ApiClient.SpecialityAllAsync();
-            errorMessage = null;
+            _specialities = await ApiClient.SpecialityAllAsync();
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to load specialities: {ex.Message}";
-            specialities = null;
+            _errorMessage = $"Failed to load specialities: {ex.Message}";
+            _specialities = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -134,17 +139,32 @@ else if (specialities != null && !specialities.Any())
     {
         try
         {
-            foundSpeciality = await ApiClient.SpecialityGETAsync(searchId);
-            errorMessage = null;
+            _foundSpeciality = await ApiClient.SpecialityGETAsync(_searchId);
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to find speciality: {ex.Message}";
-            foundSpeciality = null;
+            _errorMessage = $"Failed to find speciality: {ex.Message}";
+            _foundSpeciality = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task ValidateAndAddSpeciality()
+    {
+        if (string.IsNullOrWhiteSpace(_newSpeciality.Name) ||
+            string.IsNullOrWhiteSpace(_newSpeciality.Number) ||
+            string.IsNullOrWhiteSpace(_newSpeciality.Facility))
+        {
+            _validationError = "All fields are required.";
+        }
+        else
+        {
+            _validationError = null;
+            await AddSpeciality();
         }
     }
 
@@ -152,17 +172,17 @@ else if (specialities != null && !specialities.Any())
     {
         try
         {
-            await ApiClient.SpecialityPOSTAsync(newSpeciality);
-            errorMessage = "Speciality added successfully.";
-            newSpeciality = new SpecialityCreateDto();
+            await ApiClient.SpecialityPOSTAsync(_newSpeciality);
+            _errorMessage = "Speciality added successfully.";
+            _newSpeciality = new SpecialityCreateDto();
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to add speciality: {ex.Message}";
+            _errorMessage = $"Failed to add speciality: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -170,24 +190,24 @@ else if (specialities != null && !specialities.Any())
     {
         try
         {
-            var speciality = await ApiClient.SpecialityGETAsync(editId);
-            editSpeciality = new SpecialityCreateDto
+            var speciality = await ApiClient.SpecialityGETAsync(_editId);
+            _editSpeciality = new SpecialityCreateDto
                 {
                     Name = speciality.Name,
                     Number = speciality.Number,
                     Facility = speciality.Facility
                 };
-            errorMessage = null;
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to load speciality with ID {editId}: {ex.Message}";
-            editSpeciality = null;
+            _errorMessage = $"Failed to load speciality with ID {_editId}: {ex.Message}";
+            _editSpeciality = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
-            editSpeciality = null;
+            _errorMessage = $"Unknown error: {ex.Message}";
+            _editSpeciality = null;
         }
     }
 
@@ -195,17 +215,17 @@ else if (specialities != null && !specialities.Any())
     {
         try
         {
-            await ApiClient.SpecialityPUTAsync(editId, editSpeciality);
-            errorMessage = "Speciality updated successfully.";
-            editSpeciality = null;
+            await ApiClient.SpecialityPUTAsync(_editId, _editSpeciality);
+            _errorMessage = "Speciality updated successfully.";
+            _editSpeciality = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to update speciality with ID {editId}: {ex.Message}";
+            _errorMessage = $"Failed to update speciality with ID {_editId}: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -213,16 +233,16 @@ else if (specialities != null && !specialities.Any())
     {
         try
         {
-            await ApiClient.SpecialityDELETEAsync(deleteId);
-            errorMessage = "Speciality deleted successfully.";
+            await ApiClient.SpecialityDELETEAsync(_deleteId);
+            _errorMessage = "Speciality deleted successfully.";
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to delete speciality with ID {deleteId}: {ex.Message}";
+            _errorMessage = $"Failed to delete speciality with ID {_deleteId}: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 }

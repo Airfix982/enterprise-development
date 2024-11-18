@@ -3,14 +3,14 @@
 
 <h3>Applications Management</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
+@if (!string.IsNullOrEmpty(_errorMessage))
 {
-    <p style="color:red;">Error: @errorMessage</p>
+    <p style="color:red;">Error: @_errorMessage</p>
 }
 
 <button @onclick="LoadAllApplications">Get All Applications</button>
 
-@if (applications != null && applications.Any())
+@if (_applications != null && _applications.Any())
 {
     <table>
         <thead>
@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var application in applications)
+            @foreach (var application in _applications)
             {
                 <tr>
                     <td>@application.Id</td>
@@ -34,7 +34,7 @@
         </tbody>
     </table>
 }
-else if (applications != null && !applications.Any())
+else if (_applications != null && !_applications.Any())
 {
     <p>No applications found.</p>
 }
@@ -42,16 +42,16 @@ else if (applications != null && !applications.Any())
 <hr />
 
 <h4>Find Application by ID</h4>
-<input type="number" @bind="searchId" placeholder="Enter Application ID" />
+<input type="number" @bind="_searchId" placeholder="Enter Application ID" />
 <button @onclick="LoadApplicationById">Find Application</button>
 
-@if (foundApplication != null)
+@if (_foundApplication != null)
 {
     <h5>Application Details</h5>
-    <p><strong>ID:</strong> @foundApplication.Id</p>
-    <p><strong>Speciality ID:</strong> @foundApplication.Speciality_id</p>
-    <p><strong>Abiturient ID:</strong> @foundApplication.Abiturient_id</p>
-    <p><strong>Priority:</strong> @foundApplication.Priority</p>
+    <p><strong>ID:</strong> @_foundApplication.Id</p>
+    <p><strong>Speciality ID:</strong> @_foundApplication.Speciality_id</p>
+    <p><strong>Abiturient ID:</strong> @_foundApplication.Abiturient_id</p>
+    <p><strong>Priority:</strong> @_foundApplication.Priority</p>
 }
 
 <hr />
@@ -59,36 +59,40 @@ else if (applications != null && !applications.Any())
 <h4>Add New Application</h4>
 <div>
     <label>Speciality ID:</label>
-    <input type="number" @bind="newApplication.Speciality_id" placeholder="Enter Speciality ID" />
+    <input type="number" @bind="_newApplication.Speciality_id" placeholder="Enter Speciality ID" />
     <br />
     <label>Abiturient ID:</label>
-    <input type="number" @bind="newApplication.Abiturient_id" placeholder="Enter Abiturient ID" />
+    <input type="number" @bind="_newApplication.Abiturient_id" placeholder="Enter Abiturient ID" />
     <br />
     <label>Priority:</label>
-    <input type="number" @bind="newApplication.Priority" placeholder="Enter Priority (1-3)" />
+    <input type="number" @bind="_newApplication.Priority" placeholder="Enter Priority (1-3)" />
+    @if (!string.IsNullOrEmpty(_validationError))
+    {
+        <p style="color:red;">@_validationError</p>
+    }
 </div>
-<button @onclick="AddApplication">Add Application</button>
+<button @onclick="ValidateAndAddApplication">Add Application</button>
 
 <hr />
 
 <h4>Edit Application</h4>
 <div>
     <label>ID:</label>
-    <input type="number" @bind="editId" placeholder="Enter ID to edit" />
+    <input type="number" @bind="_editId" placeholder="Enter ID to edit" />
     <button @onclick="LoadApplicationForEdit">Load Application</button>
 </div>
 
-@if (editApplication != null)
+@if (_editApplication != null)
 {
     <div>
         <label>Speciality ID:</label>
-        <input type="number" @bind="editApplication.Speciality_id" />
+        <input type="number" @bind="_editApplication.Speciality_id" />
         <br />
         <label>Abiturient ID:</label>
-        <input type="number" @bind="editApplication.Abiturient_id" />
+        <input type="number" @bind="_editApplication.Abiturient_id" />
         <br />
         <label>Priority:</label>
-        <input type="number" @bind="editApplication.Priority" />
+        <input type="number" @bind="_editApplication.Priority" />
     </div>
     <button @onclick="UpdateApplication">Save Changes</button>
 }
@@ -98,35 +102,36 @@ else if (applications != null && !applications.Any())
 <h4>Delete Application</h4>
 <div>
     <label>ID:</label>
-    <input type="number" @bind="deleteId" placeholder="Enter ID to delete" />
+    <input type="number" @bind="_deleteId" placeholder="Enter ID to delete" />
     <button @onclick="DeleteApplication">Delete Application</button>
 </div>
 
 @code {
-    private IEnumerable<ApplicationDto>? applications;
-    private ApplicationDto? foundApplication;
-    private ApplicationCreateDto newApplication = new ApplicationCreateDto();
-    private ApplicationCreateDto? editApplication;
-    private int editId;
-    private int searchId;
-    private int deleteId;
-    private string? errorMessage;
+    private IEnumerable<ApplicationDto>? _applications;
+    private ApplicationDto? _foundApplication;
+    private ApplicationCreateDto _newApplication = new ApplicationCreateDto();
+    private ApplicationCreateDto? _editApplication;
+    private int _editId;
+    private int _searchId;
+    private int _deleteId;
+    private string? _errorMessage;
+    private string? _validationError;
 
     private async Task LoadAllApplications()
     {
         try
         {
-            applications = await ApiClient.ApplicationAllAsync();
-            errorMessage = null;
+            _applications = await ApiClient.ApplicationAllAsync();
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to load applications: {ex.Message}";
-            applications = null;
+            _errorMessage = $"Failed to load applications: {ex.Message}";
+            _applications = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -134,17 +139,30 @@ else if (applications != null && !applications.Any())
     {
         try
         {
-            foundApplication = await ApiClient.ApplicationGETAsync(searchId);
-            errorMessage = null;
+            _foundApplication = await ApiClient.ApplicationGETAsync(_searchId);
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to find application: {ex.Message}";
-            foundApplication = null;
+            _errorMessage = $"Failed to find application: {ex.Message}";
+            _foundApplication = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
+        }
+    }
+
+    private async Task ValidateAndAddApplication()
+    {
+        if (_newApplication.Speciality_id <= 0 || _newApplication.Abiturient_id <= 0 || _newApplication.Priority <= 0)
+        {
+            _validationError = "All fields are required and must be greater than 0.";
+        }
+        else
+        {
+            _validationError = null;
+            await AddApplication();
         }
     }
 
@@ -152,17 +170,17 @@ else if (applications != null && !applications.Any())
     {
         try
         {
-            await ApiClient.ApplicationPOSTAsync(newApplication);
-            errorMessage = "Application added successfully.";
-            newApplication = new ApplicationCreateDto();
+            await ApiClient.ApplicationPOSTAsync(_newApplication);
+            _errorMessage = "Application added successfully.";
+            _newApplication = new ApplicationCreateDto();
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to add application: {ex.Message}";
+            _errorMessage = $"Failed to add application: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -170,24 +188,24 @@ else if (applications != null && !applications.Any())
     {
         try
         {
-            var application = await ApiClient.ApplicationGETAsync(editId);
-            editApplication = new ApplicationCreateDto
+            var application = await ApiClient.ApplicationGETAsync(_editId);
+            _editApplication = new ApplicationCreateDto
                 {
                     Speciality_id = application.Speciality_id,
                     Abiturient_id = application.Abiturient_id,
                     Priority = application.Priority
                 };
-            errorMessage = null;
+            _errorMessage = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to load application with ID {editId}: {ex.Message}";
-            editApplication = null;
+            _errorMessage = $"Failed to load application with ID {_editId}: {ex.Message}";
+            _editApplication = null;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
-            editApplication = null;
+            _errorMessage = $"Unknown error: {ex.Message}";
+            _editApplication = null;
         }
     }
 
@@ -195,17 +213,17 @@ else if (applications != null && !applications.Any())
     {
         try
         {
-            await ApiClient.ApplicationPUTAsync(editId, editApplication);
-            errorMessage = "Application updated successfully.";
-            editApplication = null;
+            await ApiClient.ApplicationPUTAsync(_editId, _editApplication);
+            _errorMessage = "Application updated successfully.";
+            _editApplication = null;
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to update application with ID {editId}: {ex.Message}";
+            _errorMessage = $"Failed to update application with ID {_editId}: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 
@@ -213,16 +231,16 @@ else if (applications != null && !applications.Any())
     {
         try
         {
-            await ApiClient.ApplicationDELETEAsync(deleteId);
-            errorMessage = "Application deleted successfully.";
+            await ApiClient.ApplicationDELETEAsync(_deleteId);
+            _errorMessage = "Application deleted successfully.";
         }
         catch (ApiException ex)
         {
-            errorMessage = $"Failed to delete application with ID {deleteId}: {ex.Message}";
+            _errorMessage = $"Failed to delete application with ID {_deleteId}: {ex.Message}";
         }
         catch (Exception ex)
         {
-            errorMessage = $"Unknown error: {ex.Message}";
+            _errorMessage = $"Unknown error: {ex.Message}";
         }
     }
 }
